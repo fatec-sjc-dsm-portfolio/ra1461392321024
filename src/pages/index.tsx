@@ -217,11 +217,11 @@ const Home: React.FC = () => {
         <div className="projetos-container">
           <CarrosselProjetos
             projetos={[
-              { titulo: "Site de Gestão de Chamadas de Serviços", imagem: "/woodpacker.png", link: "https://github.com/TeamHiveAPI/API-2024.01/tree/main" },
-              { titulo: "Sistema IoT de monitoramento meteorológico", imagem: "/tecsus.png", link: "https://github.com/TeamHiveAPI/API-2025.01" },
-              { titulo: " Aplicação de Almoxarifado Para as Forças Armadas", imagem: "/almox.jpeg", link: "https://github.com/TeamHiveAPI/API-2025.02" },
-              { titulo: "Echo App - Personal Finance Tracker", imagem: "/echo.jpeg", link: "https://github.com/eberssj/Echo-Mobile" },
-              { titulo: "Site de conscientização sobre Nefrologia Pediátrica", imagem: "/criancarenal.png", link: "https://github.com/TeamHiveAPI/API-2023.2?tab=readme-ov-file" }
+              { titulo: "Site de Gestão de Chamadas de Serviços", imagem: "woodpacker.png", link: "https://github.com/TeamHiveAPI/API-2024.01/tree/main" },
+              { titulo: "Sistema IoT de monitoramento meteorológico", imagem: "tecsus.png", link: "https://github.com/TeamHiveAPI/API-2025.01" },
+              { titulo: " Aplicação de Almoxarifado Para as Forças Armadas", imagem: "almox.jpeg", link: "https://github.com/TeamHiveAPI/API-2025.02" },
+              { titulo: "Echo App - Personal Finance Tracker", imagem: "echo.jpeg", link: "https://github.com/eberssj/Echo-Mobile" },
+              { titulo: "Site de conscientização sobre Nefrologia Pediátrica", imagem: "criancarenal.png", link: "https://github.com/TeamHiveAPI/API-2023.2?tab=readme-ov-file" }
             ]}
           />
         </div>
