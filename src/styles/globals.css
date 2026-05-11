@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Zain:wght@400;700&display=swap');
 @import "tailwindcss";
 
+
 :root {
   --background: #FEFAE0; 
   --foreground: #1B2D0E; 

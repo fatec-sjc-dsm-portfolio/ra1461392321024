@@ -1,0 +1,5206 @@
+ra1461392321024/
+├── public/
+│   └── .nojekyll
+├── src/
+│   ├── app/
+│   ├── components/
+│   │   ├── BlocoAnotacoes.tsx
+│   │   ├── BlocoNotas.tsx
+│   │   ├── CarrosselProjetos.tsx
+│   │   ├── EmailForm.tsx
+│   │   ├── Navbar.tsx
+│   │   ├── Terminal.tsx
+│   │   └── TypingText.tsx
+│   ├── pages/
+│   │   ├── _app.tsx
+│   │   └── index.tsx
+│   ├── styles/
+│   │   ├── BlocoAnotacoes.css
+│   │   ├── BlocoNotas.css
+│   │   ├── CarrosselProjetos.css
+│   │   ├── Contato.css
+│   │   ├── EmailForm.css
+│   │   ├── globals.css
+│   │   ├── Home.css
+│   │   ├── Navbar.css
+│   │   ├── Projetos.css
+│   │   ├── Sobre.css
+│   │   └── Terminal.css
+│   ├── postcss.config.js
+│   └── tailwind.config.js
+├── .gitignore
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── README.md
+└── tsconfig.json
+
+<<FILE_START: ./public/.nojekyll>>
+npm run deploy
+<<FILE_END: ./public/.nojekyll>>
+
+
+
+<<FILE_START: ./src/components/BlocoAnotacoes.tsx>>
+import React from "react";
+import "../styles/BlocoAnotacoes.css";
+
+interface ProjetoSecundario {
+  titulo: string;
+  link: string;
+}
+
+interface BlocoAnotacoesProps {
+  projetos: ProjetoSecundario[];
+}
+
+const BlocoAnotacoes: React.FC<BlocoAnotacoesProps> = ({ projetos }) => {
+  return (
+    <div className="bloco-anotacoes-container">
+      <h2 className="tech bloco-anotacoes-titulo">Projetos Secundários</h2>
+      <div className="bloco-itens">
+        {projetos.slice(0, 9).map((projeto, index) => (
+          <div key={index} className="bloco-item">
+            <span className="tech">{projeto.titulo}</span>
+            <a
+              href={projeto.link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/LINKSEXTERNOS.svg"
+                alt="Link Externo"
+                className="bloco-icon"
+              />
+            </a>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default BlocoAnotacoes;
+
+<<FILE_END: ./src/components/BlocoAnotacoes.tsx>>
+
+<<FILE_START: ./src/components/BlocoNotas.tsx>>
+import React from "react";
+import "../styles/BlocoNotas.css";
+
+const BlocoNotas: React.FC = () => {
+  return (
+    <div className="bloco-container">
+      {/* Sombra atrás */}
+      <div className="bloco-sombra"></div>
+
+      {/* Bloco da frente */}
+      <div className="bloco-frente">
+        {/* Buracos */}
+        <div className="bloco-buracos">
+          <div className="buraco"></div>
+          <div className="buraco"></div>
+          <div className="buraco"></div>
+        </div>
+
+        {/* Corpo do bloco */}
+        <div className="bloco-corpo">
+          <a
+            href="https://open.spotify.com/user/ejzp4trywmu95c1iw0qkfr3m9?si=bce3674ec8ef4260"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bloco-item"
+          >
+            <img
+              src="/LINKSEXTERNOS.svg"
+              alt="Spotify Icon"
+              className="bloco-icon"
+            />
+            <span className="tech">Meu gosto musical :)</span>
+          </a>
+
+          <a
+            href="https://boxd.it/41wNX"
+            className="bloco-item"
+          >
+            <img
+              src="/LINKSEXTERNOS.svg"
+              alt="Icon"
+              className="bloco-icon"
+            />
+            <span className="tech">Meus filmes favoritos!</span>
+          </a>
+
+          <a
+            href="https://pin.it/6SHK6dgbv"
+            className="bloco-item"
+          >
+            <img
+              src="/LINKSEXTERNOS.svg"
+              alt="Icon"
+              className="bloco-icon"
+            />
+            <span className="tech">Meu inspo board!</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BlocoNotas;
+
+<<FILE_END: ./src/components/BlocoNotas.tsx>>
+
+<<FILE_START: ./src/components/CarrosselProjetos.tsx>>
+import React, { useEffect, useRef, useState } from "react";
+import "../styles/CarrosselProjetos.css";
+
+interface Projeto {
+  titulo: string;
+  imagem?: string;
+  link: string;
+}
+
+interface CarrosselProjetosProps {
+  projetos: Projeto[];
+  cardWidth?: number;
+  gap?: number;
+  visibleCount?: number;
+}
+
+const CarrosselProjetos: React.FC<CarrosselProjetosProps> = ({
+  projetos,
+  cardWidth = 280,
+  gap = 32,
+  visibleCount = 3,
+}) => {
+  const total = projetos.length;
+  if (total === 0) return null;
+
+  const extended = [projetos[total - 1], ...projetos, projetos[0]];
+  const [index, setIndex] = useState(1);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const itemWidth = cardWidth + gap;
+
+  const goToNext = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setIndex((i) => i + 1);
+  };
+
+  const goToPrev = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setIndex((i) => i - 1);
+  };
+
+  // Atualiza o transform sempre que index mudar
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    track.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+    track.style.transform = `translateX(${-index * itemWidth}px)`;
+
+    const onTransitionEnd = () => {
+      if (index === total + 1) {
+        track.style.transition = "none";
+        track.style.transform = `translateX(${-1 * itemWidth}px)`;
+        requestAnimationFrame(() => {
+          setIndex(1);
+          setIsAnimating(false);
+        });
+      } else if (index === 0) {
+        track.style.transition = "none";
+        track.style.transform = `translateX(${-(total) * itemWidth}px)`;
+        requestAnimationFrame(() => {
+          setIndex(total);
+          setIsAnimating(false);
+        });
+      } else {
+        setIsAnimating(false);
+      }
+    };
+
+    track.addEventListener("transitionend", onTransitionEnd);
+    return () => track.removeEventListener("transitionend", onTransitionEnd);
+  }, [index, total, itemWidth]);
+
+  // Posicionamento inicial
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    requestAnimationFrame(() => {
+      track.style.transition = "none";
+      track.style.transform = `translateX(${-1 * itemWidth}px)`;
+      requestAnimationFrame(() => {
+        track.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
+      });
+    });
+  }, [itemWidth]);
+
+  // Pré-carregamento de imagens (CORRIGIDO)
+  useEffect(() => {
+    projetos.forEach((p) => {
+      if (p.imagem) {
+        new Image().src = p.imagem;
+      }
+    });
+  }, [projetos]);
+
+  return (
+    <div className="carrossel-wrapper">
+      <button
+        className="carrossel-seta esquerda"
+        onClick={goToPrev}
+        disabled={isAnimating}
+        aria-label="Anterior"
+      >
+        ‹
+      </button>
+
+      <div
+        className="carrossel-container"
+        style={{
+          width: `${visibleCount * cardWidth + (visibleCount - 1) * gap}px`,
+          overflow: "hidden",
+        }}
+      >
+        <div
+          ref={trackRef}
+          className="carrossel-track"
+          style={{
+            display: "flex",
+            gap: `${gap}px`,
+          }}
+        >
+          {extended.map((projeto, i) => (
+            <a
+              key={i}
+              href={projeto.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="projeto-card"
+              style={{ width: cardWidth, flexShrink: 0 }}
+            >
+              <div
+                className="card-imagem"
+                style={{
+                  backgroundImage: projeto.imagem ? `url(${projeto.imagem})` : "none",
+                  backgroundColor: projeto.imagem ? "transparent" : "#405D2D",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  height: "60%",
+                }}
+              />
+              <div className="card-info">
+                <h2 className="tech card-titulo">{projeto.titulo}</h2>
+                <div className="card-linha" />
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <button
+        className="carrossel-seta direita"
+        onClick={goToNext}
+        disabled={isAnimating}
+        aria-label="Próximo"
+      >
+        ›
+      </button>
+    </div>
+  );
+};
+
+export default CarrosselProjetos;
+<<FILE_END: ./src/components/CarrosselProjetos.tsx>>
+
+<<FILE_START: ./src/components/EmailForm.tsx>>
+import React, { useState } from 'react';
+import '../styles/EmailForm.css';
+import emailjs from '@emailjs/browser';
+
+const EmailForm: React.FC = () => {
+  const [formData, setFormData] = useState({
+    nome_completo: '',
+    titulo: '',
+    email: '',
+    mensagem: ''
+  });
+
+  const [sending, setSending] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // --- coloque aqui os seus IDs do EmailJS ---
+    const SERVICE_ID = 'service_ue3gvhm';
+    const TEMPLATE_ID = 'template_280305';
+    const PUBLIC_KEY = 'zjnG-CtxGkYSGpUGb';
+    // -------------------------------------------
+
+    // Validação simples
+    if (!formData.nome_completo || !formData.email || !formData.mensagem) {
+      alert('Por favor preencha Nome, Email e Mensagem.');
+      return;
+    }
+
+    setSending(true);
+
+    // O objeto com as variáveis que o template espera
+    const templateParams = {
+      nome_completo: formData.nome_completo,
+      titulo: formData.titulo || 'Contato via portfólio',
+      email: formData.email,
+      mensagem: formData.mensagem,
+      to_email: 'eberssjunior12@gmail.com'
+    };
+
+    emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams, PUBLIC_KEY)
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        alert('Email enviado com sucesso!');
+        setFormData({ nome_completo: '', titulo: '', email: '', mensagem: '' });
+      })
+      .catch((err) => {
+        console.error('FAILED...', err);
+        alert('Erro ao enviar email. Veja o console para detalhes.');
+      })
+      .finally(() => setSending(false));
+  };
+
+  return (
+    <form className="emailform-container tech" onSubmit={handleSubmit}>
+      <div className="emailform-row">
+        <div className="emailform-group">
+          <label className="emailform-label" htmlFor="nome_completo">Nome completo</label>
+          <input
+            type="text"
+            id="nome_completo"
+            name="nome_completo"
+            value={formData.nome_completo}
+            onChange={handleChange}
+            className="emailform-input"
+            placeholder="Digite seu nome completo"
+            required
+          />
+        </div>
+
+        <div className="emailform-group">
+          <label className="emailform-label" htmlFor="titulo">Título</label>
+          <input
+            type="text"
+            id="titulo"
+            name="titulo"
+            value={formData.titulo}
+            onChange={handleChange}
+            className="emailform-input"
+            placeholder="Assunto do email"
+          />
+        </div>
+      </div>
+
+      <div className="emailform-group">
+        <label className="emailform-label" htmlFor="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          className="emailform-input"
+          placeholder="Digite seu email"
+          required
+        />
+      </div>
+
+      <div className="emailform-group">
+        <label className="emailform-label" htmlFor="mensagem">Mensagem</label>
+        <textarea
+          id="mensagem"
+          name="mensagem"
+          value={formData.mensagem}
+          onChange={handleChange}
+          className="emailform-textarea"
+          placeholder="Escreva sua mensagem"
+          required
+        />
+      </div>
+
+      <button type="submit" className="emailform-button tech" disabled={sending}>
+        {sending ? 'Enviando...' : 'Enviar email'}
+      </button>
+    </form>
+  );
+};
+
+export default EmailForm;
+
+<<FILE_END: ./src/components/EmailForm.tsx>>
+
+<<FILE_START: ./src/components/Navbar.tsx>>
+import React, { useEffect, useState } from 'react';
+import '../styles/Navbar.css';
+
+const Navbar: React.FC = () => {
+  const [active, setActive] = useState<string>('home');
+
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id);
+    const navbar = document.querySelector('nav.navbar');
+    if (!section) return;
+
+    const navbarHeight = navbar ? navbar.getBoundingClientRect().height : 0;
+    const y = section.getBoundingClientRect().top + window.pageYOffset - navbarHeight;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+
+    // Animação de entrada apenas em elementos SEGUROS (não toca no carrossel)
+    setTimeout(() => {
+      let selectors = '';
+      if (id === 'sobre') {
+        selectors = 'h1, p, .sobre-photo, .sobre-photo-text, .bloco-container';
+      } else if (id === 'projetos') {
+        selectors = 'h1, .projetos-secundarios-container > *';
+      } else if (id === 'contato') {
+        selectors = '.contato-title, .email-form, .redes-sociais, .redes-cards > *';
+      }
+
+      if (selectors) {
+        const elements = section.querySelectorAll(selectors);
+        elements.forEach((el, i) => {
+          const element = el as HTMLElement;
+          element.classList.add('section--hidden');
+          setTimeout(() => {
+            element.classList.remove('section--hidden');
+            element.classList.add('section--visible');
+          }, i * 80);
+        });
+      }
+    }, 300);
+  };
+
+  useEffect(() => {
+    const sections = document.querySelectorAll<HTMLElement>('section[id]');
+
+    const handleScroll = () => {
+      let current = 'home';
+      sections.forEach((section) => {
+        const sectionTop = section.getBoundingClientRect().top;
+        const sectionHeight = section.offsetHeight;
+
+        if (
+          sectionTop <= window.innerHeight * 0.5 &&
+          sectionTop + sectionHeight > window.innerHeight * 0.5
+        ) {
+          const parent = section.dataset.parent;
+          current = parent || section.getAttribute('id') || 'home';
+        }
+      });
+
+      setActive(current);
+    };
+
+    const initActiveSection = () => {
+      handleScroll();
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('load', initActiveSection);
+    initActiveSection(); // Chama imediatamente
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('load', initActiveSection);
+    };
+  }, []);
+
+  return (
+    <nav className="navbar tech">
+      <div className="navbar-logo tech">EJ</div>
+
+      <div className="navbar-links tech">
+        <button
+          onClick={() => scrollToSection('home')}
+          className={`navbar-link tech ${active === 'home' ? 'active' : ''}`}
+        >
+          Home
+        </button>
+
+        <button
+          onClick={() => scrollToSection('sobre')}
+          className={`navbar-link tech ${active === 'sobre' ? 'active' : ''}`}
+        >
+          Sobre Mim
+        </button>
+
+        <button
+          onClick={() => scrollToSection('projetos')}
+          className={`navbar-link tech ${active === 'projetos' ? 'active' : ''}`}
+        >
+          Projetos
+        </button>
+
+        <button
+          onClick={() => scrollToSection('contato')}
+          className={`navbar-link tech ${active === 'contato' ? 'active' : ''}`}
+        >
+          Contato
+        </button>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
+<<FILE_END: ./src/components/Navbar.tsx>>
+
+<<FILE_START: ./src/components/Terminal.tsx>>
+import React, { useState, useRef, useEffect } from 'react';
+import TypingText from './TypingText';
+import '../styles/Terminal.css';
+
+const Terminal: React.FC = () => {
+  const [inputValue, setInputValue] = useState('');
+  type HistoryItem = { kind: 'input' | 'response' | 'static'; text: string };
+
+  const [history, setHistory] = useState<HistoryItem[]>([
+    { kind: 'static', text: 'Coding since 2022' },
+    { kind: 'static', text: 'Welcome to my portfolio!' },
+  ]);
+
+  const [hasResponded, setHasResponded] = useState(false);
+  const [focused, setFocused] = useState(true);
+  const terminalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.focus();
+    }
+  }, []);
+
+  const commandResponses: { [key: string]: string } = {
+    'oi': 'hey sister',
+    'oii': 'walk for me.',
+    'ola': 'the icon.',
+    'olá': 'face.',
+    'tudo bem': 'im literally 45 years old',
+    'que legal': 'ate.',
+    'muito bom': 'left no crumbs.',
+    'gostei': 'you have taste.',
+    'show': 'i guess',
+    'legal': 'thx ho',
+    'massa': 'low frequency energy',
+    'top': 'the girls are girling',
+    'amei': 'obsessed.',
+    'amo': 'correct.',
+    'amoo': 'we are the moment',
+    'ameii': 'stunning.',
+    'bonito': 'stop looking at me',
+    'arrasou': 'an absolute vision',
+    'divou': 'the blueprint.',
+    'diva': 'estrogen.',
+    'divo': 'wait...',
+    'veyr': 'STFU and look at the material.',
+    'vey': 'dont call me that',
+    'hey hey hey': 'look at the material',
+    'feio': 'jail.',
+    'bosta': 'security.',
+    'lixo': 'fast fashion behavior',
+    'horror': 'immediately no.',
+    'péssimo': 'commercial failure.',
+    'pessimo': 'delete it.',
+    'ruim': 'go back to gap',
+    'odeio': 'you dont get the vision',
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    // Se já respondeu uma vez, acabou o show.
+    if (hasResponded) return;
+
+    if (e.key === 'Enter') {
+      const command = inputValue.trim();
+      if (!command) return;
+
+      setHistory(prev => [...prev, { kind: 'input', text: command }]);
+
+      const lc = command.toLowerCase();
+      let response: string | undefined;
+
+      for (const key in commandResponses) {
+        if (lc.includes(key)) {
+          response = commandResponses[key];
+          break;
+        }
+      }
+
+      const badWords = ['bosta', 'lixo', 'horror', 'péssimo', 'pessimo', 'ruim', 'merda', 'idiota', 'feio', 'odeio'];
+      
+      if (!response && badWords.some(w => lc.includes(w))) {
+        response = 'get a job. stay away from me.';
+      }
+
+      if (!response) {
+        response = 'anyway...';
+      }
+
+      setHistory(prev => [...prev, { kind: 'response', text: response! }]);
+      setHasResponded(true); // Trava futuras interações
+      setInputValue('');
+
+    } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+      setInputValue(prev => prev + e.key);
+    } else if (e.key === 'Backspace') {
+      setInputValue(prev => prev.slice(0, -1));
+    }
+  };
+
+  return (
+    <div
+      className="terminal-wrapper"
+      ref={terminalRef}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
+      style={{ outline: 'none' }}
+    >
+      <div className="terminal-shadow"></div>
+      <div className="terminal-body tech">
+        <div className="terminal-tabs tech">
+          <span>PROBLEMS</span>
+          <span>OUTPUT</span>
+          <span className="active-tab">TERMINAL</span>
+          <span>DEBUG CONSOLE</span>
+          <span>PORTS</span>
+        </div>
+
+        <div className="terminal-content tech">
+          {history.map((item, index) => {
+            if (item.kind === 'static' || item.kind === 'input') {
+              return (
+                <p key={index} className="terminal-line tech">
+                  C:\Users\Eber&gt; {item.text}
+                </p>
+              );
+            }
+
+            if (item.kind === 'response') {
+              return (
+                <div key={index} className="terminal-line tech response-line">
+                  <span>C:\Users\Eber&gt;&nbsp;</span>
+                  <TypingText text={item.text} speed={30} />
+                </div>
+              );
+            }
+
+            return null;
+          })}
+
+          {/* O input só aparece se ainda não houve resposta */}
+          {!hasResponded && (
+            <div className="terminal-input-line tech">
+              <span>C:\Users\Eber&gt; </span>
+              <span>{inputValue}</span>
+              {focused && <span className="blinking-cursor"></span>}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Terminal;
+<<FILE_END: ./src/components/Terminal.tsx>>
+
+<<FILE_START: ./src/components/TypingText.tsx>>
+import React, { useState, useEffect } from 'react';
+
+interface TypingTextProps {
+  text: string;
+  speed?: number; 
+  onComplete?: () => void;
+}
+
+const TypingText: React.FC<TypingTextProps> = ({ text, speed = 50, onComplete }) => {
+  const [displayedText, setDisplayedText] = useState('');
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      setDisplayedText(text.slice(0, index + 1));
+      index++;
+      if (index === text.length) {
+        clearInterval(interval);
+        onComplete && onComplete();
+      }
+    }, speed);
+
+    return () => clearInterval(interval);
+  }, [text, speed, onComplete]);
+
+  return <span>{displayedText}</span>;
+};
+
+export default TypingText;
+
+<<FILE_END: ./src/components/TypingText.tsx>>
+
+<<FILE_START: ./src/pages/_app.tsx>>
+// pages/_app.tsx
+import type { AppProps } from 'next/app';
+import '../styles/globals.css'; 
+
+function MyApp({ Component, pageProps }: AppProps) {
+  return <Component {...pageProps} />;
+}
+
+export default MyApp;
+<<FILE_END: ./src/pages/_app.tsx>>
+
+<<FILE_START: ./src/pages/index.tsx>>
+import React, { useEffect } from 'react';
+import Navbar from '../components/Navbar';
+import Terminal from '../components/Terminal';
+import BlocoNotas from '../components/BlocoNotas';
+import BlocoAnotacoes from '../components/BlocoAnotacoes';
+import CarrosselProjetos from '../components/CarrosselProjetos';
+import EmailForm from '../components/EmailForm';
+import '../styles/Contato.css';
+import '../styles/Projetos.css';
+import '../styles/Home.css';
+import '../styles/Sobre.css';
+
+const Home: React.FC = () => {
+  useEffect(() => {
+    const animateSection = (sectionId: string, selectors: string[]) => {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const elements = section.querySelectorAll(selectors.join(','));
+      elements.forEach(el => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.classList.add('section--hidden');
+        htmlEl.style.transitionDelay = '0s';
+      });
+
+      const observer = new IntersectionObserver(
+        entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              elements.forEach((el, i) => {
+                (el as HTMLElement).style.transitionDelay = `${i * 0.08}s`;
+                el.classList.remove('section--hidden');
+                el.classList.add('section--visible');
+              });
+            } else {
+              elements.forEach(el => {
+                el.classList.remove('section--visible');
+                el.classList.add('section--hidden');
+                (el as HTMLElement).style.transitionDelay = '0s';
+              });
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      observer.observe(section);
+      return observer;
+    };
+
+
+    const animateElementsInSection = (sectionId: string) => {
+      const section = document.getElementById(sectionId);
+      if (!section) return;
+
+      const elements = Array.from(section.children);
+      
+      elements.forEach((el) => {
+        el.classList.remove('section--visible');
+        el.classList.add('section--hidden');
+      });
+
+      elements.forEach((el, i) => {
+        setTimeout(() => {
+          el.classList.remove('section--hidden');
+          el.classList.add('section--visible');
+        }, i * 80); // delay entre os elementos
+      });
+    };
+
+    const observers: IntersectionObserver[] = [];
+
+    // Sobre Mim
+    observers.push(
+      animateSection('sobre', [
+        'h1', 'p', 'img', '.sobre-photo', '.sobre-photo-text', '.bloco-container'
+      ])!
+    );
+
+    // Projetos
+    observers.push(
+      animateSection('projetos', [
+        'h1', '.projetos-container > *', '.projetos-secundarios-container > *', '.trajetoria-texto > *', '.projetos-triangulos'
+      ])!
+    );
+
+    // Contato
+    observers.push(
+      animateSection('contato', [
+        '.contato-title',
+        '.email-form',
+        '.redes-sociais',
+        '.redes-cards > *'
+      ])!
+    );
+
+    return () => observers.forEach(obs => obs.disconnect());
+  }, []);
+
+    useEffect(() => {
+    const setNavbarHeightVar = () => {
+      const navbar = document.querySelector('nav.navbar') as HTMLElement | null;
+      const height = navbar ? navbar.getBoundingClientRect().height : 72; // fallback
+      // define a variável CSS na raiz
+      document.documentElement.style.setProperty('--navbar-height', `${height}px`);
+      // também aplica padding-top direto na home-section caso queira fallback extra
+      const homeSection = document.querySelector('.home-section') as HTMLElement | null;
+      if (homeSection) {
+        homeSection.style.paddingTop = `${height}px`;
+      }
+    };
+
+    // executa ao montar
+    setNavbarHeightVar();
+
+    // atualiza quando redimensiona (ex.: rotações de celular)
+    window.addEventListener('resize', setNavbarHeightVar);
+
+    // cleanup
+    return () => {
+      window.removeEventListener('resize', setNavbarHeightVar);
+    };
+  }, []);
+
+  return (
+    <div className="page-container">
+      <Navbar />
+
+      {/* HOME */}
+      <section id="home" className="section home-section">
+        <main>
+          <div className="home-title-container">
+            <h1 className="title tech">
+              <span className="typing-animation tech home-title">
+                Bem-vindo ao meu Portfólio!
+              </span>
+            </h1>
+          </div>
+
+          <div className="content-container">
+            <div className="terminal-container">
+              <Terminal />
+            </div>
+            <div className="home-photo-container">
+              <div className="photo-wrapper">
+                {/* Borda da foto */}
+                <div className="photo-border"></div>
+
+                {/* Radars nos cantos da borda */}
+                <div className="photo-radar-corner radar-top-left"></div>
+                <div className="photo-radar-corner radar-bottom-right"></div>
+
+                {/* Foto */}
+                <img src="/eu.jpeg" alt="Eber" className="home-photo" />
+                
+                {/* Cantos decorativos */}
+                <div className="photo-corners photo-corner-bl"></div>
+                <div className="photo-corners photo-corner-tr"></div>
+              </div>
+
+            </div>
+          </div>
+        </main>
+      </section>
+
+      {/* SOBRE MIM */}
+      <section id="sobre" className="section sobre-section">
+        <div className="sobre-content">
+          <div className="sobre-text">
+            <h1 className="title">
+              <span className="tech">Prazer, Eber!</span>
+            </h1>
+
+            <p>
+              Tenho 20 anos e atualmente estudo Desenvolvimento de Software
+              Multiplataforma na Fatec de São José dos Campos. Escolhi esse curso
+              porque sou apaixonado por tecnologia e inovação, e quero compartilhar
+              um pouco desse entusiasmo aqui.
+            </p>
+
+            <p>
+              Além do universo tech, tenho um grande interesse por arte, comunicação
+              e moda. Acredito que entender como símbolos, cores e formas se
+              conectam com as pessoas é essencial para criar experiências
+              significativas.
+            </p>
+
+            <p>
+              Sou fã de cultura pop e valorizo muito a comunicação como ponte, seja
+              para colaborar em projetos acadêmicos e profissionais, seja para
+              fortalecer conexões no meu dia a dia.
+            </p>
+
+            <p>
+              Obrigado por chegar até aqui! Espero que o que você encontrar nesse
+              portfólio faça sentido pra você tanto quanto faz pra mim.
+            </p>
+            <img
+              src="/bolinhas.png"
+              alt="Decoração bolinhas"
+              className="sobre-bolinhas"
+            />
+          </div>
+
+          <div className="sobre-photo-container">
+            <img src="/hirono.png" alt="Eber" className="sobre-photo section--hidden" />
+            <p className="tech sobre-photo-text section--hidden">Esse sou eu, btw! :p</p>
+            <BlocoNotas />
+          </div>
+        </div>
+      </section>
+
+      {/* PROJETOS */}
+      <section id="projetos" className="section projetos-section">
+        <h1 className="title tech projetos-title">Projetos Principais</h1>
+
+        <div className="projetos-container">
+          <CarrosselProjetos
+            projetos={[
+              { titulo: "Site de Gestão de Chamadas de Serviços", imagem: "/woodpacker.png", link: "https://github.com/TeamHiveAPI/API-2024.01/tree/main" },
+              { titulo: "Sistema IoT de monitoramento meteorológico", imagem: "/tecsus.png", link: "https://github.com/TeamHiveAPI/API-2025.01" },
+              { titulo: " Aplicação de Almoxarifado Para as Forças Armadas", imagem: "/almox.jpeg", link: "https://github.com/TeamHiveAPI/API-2025.02" },
+              { titulo: "Echo App - Personal Finance Tracker", imagem: "/echo.jpeg", link: "https://github.com/eberssj/Echo-Mobile" },
+              { titulo: "Site de conscientização sobre Nefrologia Pediátrica", imagem: "/criancarenal.png", link: "https://github.com/TeamHiveAPI/API-2023.2?tab=readme-ov-file" }
+            ]}
+          />
+        </div>
+          {/* PARTE INFERIOR DE PROJETOS */}
+        <section className="section projetos-secundarios-section" data-parent="projetos">
+          <div className="projetos-secundarios-container">
+            {/* LADO ESQUERDO: texto */}
+            <div className="trajetoria-texto">
+              <h1 className="title tech titulo-trajetoria">Trajetória acadêmica e formação</h1>
+              <p>
+                Concluí o ensino médio em 2022 na instituição UNIVAP Aquarius e, logo em seguida, iniciei o curso superior de Desenvolvimento de Software Multiplataforma na FATEC de São José dos Campos, onde estudo atualmente.
+              </p>
+              <p>
+                Nesse período, também decidi me dedicar ao aprendizado de idiomas: aprofundei meus conhecimentos em inglês e realizei um ano de curso de conversação em francês, o que contribuiu muito para minha confiança ao me comunicar e para a ampliação da rede de contatos.
+              </p>
+              <p>
+                A comunicação, de forma geral, sempre teve grande importância para mim. Acredito que saber transmitir e receber ideias de maneira clara e eficaz é essencial para que elas sejam compreendidas e gerem resultados. Por isso, busco constantemente aprimorar minhas habilidades comunicativas, fortalecendo minha capacidade de conexão com as pessoas.
+              </p>
+              <img
+              src="/triangulos.svg"
+              alt="Decoração triangulos"
+              className="projetos-triangulos"
+            />
+            </div>
+
+            {/* LADO DIREITO: bloco de anotações */}
+            <BlocoAnotacoes
+              projetos={[
+                { titulo: "Atlantis", link: "https://github.com/eberssj/atlantis" },
+                { titulo: "Python Para Zumbis", link: "https://github.com/eberssj/PPZ" },
+                { titulo: "Autobots", link: "https://github.com/eberssj/autobots" },
+                { titulo: "ChatBot Telegram - Stardew", link: "https://github.com/eberssj/bertoti" },
+                { titulo: "Echo - Website", link: "https://github.com/eberssj/echo" },
+                { titulo: "Flutter 3.0", link: "https://github.com/eberssj/flutter3.0" },
+              ]}
+            />
+          </div>
+        </section>
+      
+        </section>
+          {/* CONTATO */}
+        <section id="contato" className="section section--visible contato-section">
+          <h1 className="title tech contato-title">
+            <span className="tech">Principais formas <br /> de contato</span>
+          </h1>
+
+          <div className="contato-content">
+            <div className="email-form">
+              <EmailForm />
+            </div>
+            
+            {/* BLOCO DE REDES SOCIAIS */}
+            <div className="redes-sociais">
+              <h1 className="title tech redes-title">Redes sociais:</h1>
+              <div className="redes-cards tech">
+                <a
+                  href="https://www.instagram.com/myspaceberr?igsh=amo1amxwcmZrazls&utm_source=qr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rede-card instagram"
+                >
+                  <span>Instagram</span>
+                </a>
+                <a
+                  href="https://github.com/eberssj"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rede-card github"
+                >
+                  <span>GitHub</span>
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/eber-junior-b2a4a3211/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="rede-card linkedin"
+                >
+                  <span>LinkedIn</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+              </div>
+            );
+          };
+
+export default Home;
+
+<<FILE_END: ./src/pages/index.tsx>>
+
+<<FILE_START: ./src/styles/BlocoAnotacoes.css>>
+.bloco-anotacoes-container {
+  background-color: #d9d2a7;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.bloco-anotacoes-titulo {
+  font-size: 1.5rem;
+  text-align: center;
+  color: #1B2D0E;
+}
+
+.bloco-itens {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.bloco-item {
+  background-color: #b1ab86;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fffdee;
+  font-size: 1rem;
+  transition: transform 0.2s;
+}
+
+.bloco-item:hover {
+  transform: translateY(-3px);
+}
+
+.bloco-icon {
+  width: 24px;
+  height: 24px;
+}
+
+<<FILE_END: ./src/styles/BlocoAnotacoes.css>>
+
+<<FILE_START: ./src/styles/BlocoNotas.css>>
+.bloco-container {
+  position: relative;
+  width: 320px;
+  margin-top: 2rem;
+}
+
+
+.bloco-sombra {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 100%;
+  height: 100%;
+  background-color: #B1AB86;
+  border-radius: 8px;
+  z-index: 1;
+}
+
+
+.bloco-frente {
+  position: relative;
+  background-color: #D9D2A7;
+  border-radius: 8px;
+  padding: 1rem;
+  z-index: 2;
+  box-sizing: border-box;
+}
+
+
+.bloco-buracos {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.buraco {
+  width: 10px;
+  height: 10px;
+  background-color: #B1AB86;
+  border-radius: 50%;
+}
+
+
+.bloco-corpo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bloco-item {
+  display: flex;
+  align-items: center;
+  background-color: #405D2D;
+  color: #FFF9D0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  text-decoration: none;
+  gap: 0.5rem;
+  transition: transform 0.2s;
+}
+
+.bloco-item:hover {
+  transform: translateY(-3px);
+}
+
+.bloco-icon {
+  width: 24px;
+  height: 24px;
+}
+
+
+
+<<FILE_END: ./src/styles/BlocoNotas.css>>
+
+<<FILE_START: ./src/styles/CarrosselProjetos.css>>
+.carrossel-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+  user-select: none;
+}
+
+.carrossel-seta {
+  background: none;
+  border: none;
+  font-size: 2.6rem;
+  color: #405d2d;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  z-index: 10;
+}
+
+.carrossel-seta:hover:not(:disabled) {
+  transform: scale(1.1);
+}
+
+.carrossel-seta:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.carrossel-container {
+  overflow: hidden;
+  position: relative;
+}
+
+.carrossel-track {
+  display: flex;
+  /* gap via inline style */
+}
+
+.projeto-card {
+  height: 380px;
+  background-color: #fdfbf0;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.projeto-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.card-imagem {
+  height: 60%;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-info {
+  height: 40%;
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.card-titulo {
+  color: #405d2d;
+  font-size: 1.2rem;
+  text-align: center;
+  margin: 0.5rem 0;
+}
+
+.card-linha {
+  width: 60%;
+  height: 3px;
+  background-color: #405d2d;
+  border-radius: 2px;
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+<<FILE_END: ./src/styles/CarrosselProjetos.css>>
+
+<<FILE_START: ./src/styles/Contato.css>>
+
+.contato-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2rem 0;
+  box-sizing: border-box;
+  margin-left: -70px;
+  min-height: 100vh; /* garante que ocupe toda a tela */
+}
+
+
+.contato-title {
+  margin: 0 0 2rem 70px;
+  padding: 0;
+  text-align: left;
+}
+
+
+.contato-content {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0;
+  padding-left: 70px;
+}
+
+
+.email-form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+
+.redes-sociais {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+
+.redes-sociais .redes-title {
+  margin: 0 0 2rem 0;
+  padding: 0;
+  text-align: left;
+  transform: translateY(20px);
+  align-items: center;
+}
+
+
+.redes-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  height: 100%;
+}
+
+
+.rede-card {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1rem;
+  background-color: #405D2D;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #FFFDEE;
+  width: 400px;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.rede-card:hover {
+  transform: translateY(-2px);
+}
+
+
+.rede-card::before {
+  content: '';
+  width: 30px;
+  height: 24px;
+  display: inline-block;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.rede-card.instagram::before {
+  background-image: url('/instagram.svg');
+}
+
+.rede-card.github::before {
+  background-image: url('/github.svg');
+}
+
+.rede-card.linkedin::before {
+  background-image: url('/linkedin.svg');
+}
+
+
+.rede-card::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  background-image: url('/LINKSEXTERNOS.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  position: absolute;
+  right: 10px;
+}
+
+
+.rede-card::before,
+.rede-card::after {
+  filter: brightness(0) invert(1);
+}
+
+
+.rede-card span {
+  font-weight: 500;
+  color: #FFFDEE;
+}
+<<FILE_END: ./src/styles/Contato.css>>
+
+<<FILE_START: ./src/styles/EmailForm.css>>
+.emailform-container {
+  width: 100%;
+  max-width: 640px;
+  margin: 1.6rem auto;
+  padding: 1.1rem;
+  border: 2px solid #405D2D;
+  background-color: transparent;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.emailform-row {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.emailform-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.emailform-label {
+  color: rgba(64, 93, 45, 0.6);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.emailform-input,
+.emailform-textarea {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #405D2D;
+  color: #405D2D;
+  font-size: 0.95rem;
+  padding: 0.35rem 0;
+  outline: none;
+}
+
+.emailform-input::placeholder,
+.emailform-textarea::placeholder {
+  color: rgba(64,93,45,0.6);
+  opacity: 0.6;
+}
+
+.emailform-input:focus,
+.emailform-textarea:focus {
+  border-bottom: 2px solid #5f8a44;
+}
+
+.emailform-textarea {
+  resize: none;
+  height: 70px;
+}
+
+.emailform-button {
+  margin-top: 0.6rem;
+  background-color: #405D2D;
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  align-self: center;
+}
+
+.emailform-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Section */
+.contato-section {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 1.6rem;
+}
+
+.contato-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+
+<<FILE_END: ./src/styles/EmailForm.css>>
+
+<<FILE_START: ./src/styles/globals.css>>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Zain:wght@400;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #FEFAE0; 
+  --foreground: #1B2D0E; 
+  --font-title: 'Share Tech Mono', monospace; 
+  --font-text: 'Zain', sans-serif; 
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-text); 
+  --font-mono: var(--font-title); 
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-text); 
+  margin: 0 70px; 
+  min-height: 100vh;
+}
+
+
+.zain {
+  font-family: var(--font-text);
+}
+
+.tech {
+  font-family: var(--font-title);
+  line-height: 1.5; /* Standardize line height for terminal text */
+}
+
+/* Animação de digitação */
+.typing-animation {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 3s steps(var(--typing-steps, 27), end), blink-caret 0.75s step-end infinite;
+  border-right: 0.25em solid var(--foreground); /* Cursor para título */
+}
+
+/* Animação de digitação para terminal */
+.terminal-typing-animation {
+  display: inline;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 3s steps(var(--typing-steps, 27), end), blink-caret 0.75s step-end infinite;
+  border-right: 0.3em solid #FEFAE0; /* Cursor para terminal */
+  vertical-align: baseline;
+  padding-right: 0.3em;
+}
+
+
+/* Cursor piscando no terminal */
+.blinking-cursor {
+  display: inline-block;
+  width: 0.25em; /* Cursor menos grosso */
+  height: 1em;
+  background-color: #FEFAE0;
+  vertical-align: bottom;
+  animation: blink 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: var(--typing-width, 27ch); }
+}
+
+@keyframes blink {
+  from, to { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: inherit; }
+}
+
+/* ---- ANIMAÇÃO DE ENTRADA ---- */
+.section--hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  filter: blur(6px);
+  transition: opacity 0.6s ease, transform 0.6s ease, filter 0.7s ease;
+}
+
+.section--visible {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition: opacity 0.6s ease, transform 0.6s ease, filter 0.7s ease;
+}
+
+
+.section > * {
+  transition: opacity 0.6s ease, transform 0.6s ease, filter 0.7s ease;
+}
+
+html, body {
+  transition: background 0.6s ease, color 0.6s ease;
+}
+
+#home.section--visible {
+  background: var(--background);
+}
+
+#sobre.section--visible {
+  background: linear-gradient(
+    180deg,
+    rgba(254, 250, 224, 1) 0%,
+    rgba(240, 240, 210, 1) 100%
+  );
+}
+
+/* ====== RESPONSIVIDADE GERAL ====== */
+@media (max-width: 768px) {
+
+  /* ====== Ajuste da Navbar ====== */
+  .navbar {
+    padding: 0.8rem 1rem !important;
+  }
+
+  .navbar-links {
+    gap: 0.4rem !important;
+  }
+
+  .navbar-link {
+    font-size: 1.2rem; /* aumenta os botões */
+    padding: 1rem 0.8rem !important;
+  }
+
+  /* ====== Ajuste do BODY ====== */
+  body {
+    margin: 0 20px !important; /* reduz a margem lateral no celular */
+    overflow-x: hidden !important;
+  }
+
+  /* ====== Seção Home ====== */
+  .home-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: first baseline !important;
+    gap: 2rem;
+    padding-top: 50% !important; 
+  }
+
+  /* ====== Título ====== */
+  .home-section .title {
+    font-size: 2rem !important; /* mantém o tamanho ideal */
+    text-align: center !important;
+    align-items: center !important;
+    margin-bottom: 10% !important;
+    width: 100% !important;
+    max-width: 90% !important;
+    overflow-wrap: break-word;
+  }
+
+  @keyframes typing-mask {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+  .home-title {
+    display: inline-block;
+    width: 27ch; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-align: center;
+    margin: 0 auto !important; /* centraliza horizontalmente */
+    animation: typing-mask 3s steps(27) forwards;
+    transform: translateX(-15px) !important; 
+  }
+
+  .home-title::after {
+    content: '';
+    display: inline-block;
+    width: 27ch;
+    visibility: hidden;
+  }
+
+  /* ====== Terminal ====== */
+  .terminal-wrapper {
+    order: 1;
+    width: 100% !important;
+    max-width: 500px !important;
+    height: 200px !important; /* altura fixa — ajusta conforme quiser */
+    margin: 0 auto !important;
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+    margin-left: 0 !important;
+    flex-shrink: 0; /* impede que ele reduza ou cresça */
+    position: relative !important;
+    z-index: 2 !important;
+  }
+
+  .terminal-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 15% !important;
+  }
+
+  .terminal-body {
+    height: 100% !important; /* preenche a altura fixa */
+    overflow: hidden; /* evita "pulos" de layout */
+  }
+  .terminal-tabs {
+    gap: 1rem !important;
+    flex-wrap: wrap;
+    font-size: 1rem !important;
+    justify-content: center !important;
+  }
+
+  .terminal-content {
+    height: auto !important; /* evita corte no conteúdo */
+    max-height: 12rem !important;
+    overflow-y: auto;
+  }
+
+  .terminal-line,
+  .response-line,
+  .terminal-input-line {
+    font-size: 1rem;
+    word-wrap: break-word;
+  }
+
+  /* ====== Imagem (se houver) ====== */
+
+
+  .home-photo-container {
+    order: 2; /* depois */
+    display: flex;
+    justify-content: center !important;
+    width: 100%;
+    margin-left: 5% !important;
+    margin-bottom: 20% !important;
+  }
+
+  .photo-wrapper {
+    width: 220px;
+    height: 220px;
+  }
+
+  .home-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+  }
+
+  /* Ajuste extra pra deixar o título acima do terminal */
+  .home-section .title {
+    order: 0; /* título vem primeiro */
+    font-size: 2.3rem;
+    text-align: center !important;
+    margin: 0 !important;
+    width: 80%;
+    align-items: center !important;
+  }
+
+  .home-title-container {
+    height: 6rem; /* reserva o espaço total do título */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+    position: relative !important;
+    z-index: 3 !important;
+  }
+  .content-container {
+    flex-direction: column !important;
+  }
+
+
+  .sobre-content {
+    align-items: center !important;
+    text-align: justify!important;
+    align-items: center !important;
+    margin-left: 20% !important;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .sobre-text{
+    max-width: 700px !important;
+    width: 100% !important;
+    margin-bottom: 20% !important;
+    transform: translateX(-10px) !important; 
+  }
+
+  .sobre-photo-container {
+    margin: 0 !important;
+    transform: translateX(-10px) !important; 
+  }
+
+  /* ====== Seção Projetos ====== */
+  .projetos-section {
+    display: flex;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    transform: translateX(-20px) !important; 
+  }
+
+  .projetos-title {
+    text-align: left !important; /* alinha o texto à esquerda */
+    max-width: 700px !important; /* limita largura igual ao conteúdo abaixo */
+    margin-bottom: 1.5rem !important;
+    margin-left: 60% !important;
+    width: 400px;
+  }
+
+  /* ====== Carrossel ====== */
+  .projetos-container {
+    width: 100% !important;
+    max-width: 700px !important; /* mesma largura do título e container inferior */
+    margin-left: 70% !important; /* mesma margem da parte inferior */
+    display: flex;
+    justify-content: flex-start !important; /* alinha carrossel à esquerda */
+    align-items: center !important;
+    gap: 1rem;
+  }
+
+  .projetos-secundarios-section {
+    width: 100% !important;
+    display: flex;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    margin-top: 2rem !important;
+  }
+
+    .projetos-secundarios-container {
+    flex-direction: column !important; /* coloca em coluna para mobile */
+    align-items: flex-start !important; /* alinha à esquerda */
+    justify-content: center !important;
+    max-width: 700px !important; /* limita largura total */
+    margin-left: 50% !important; /* move o conteúdo mais pra esquerda */
+    gap: 2rem !important;
+    width: 100% !important;
+  }
+
+  .trajetoria-texto {
+    width: 100% !important; /* mantém responsivo */
+    max-width: 600px !important; /* limita largura pra caber dentro da margem */
+    margin: 0 !important; /* remove margin automática */
+    text-align: justify !important;
+    transform: translateX(-10px) !important; 
+  }
+
+  .titulo-trajetoria{
+   text-align: left !important; /* alinha o texto à esquerda */
+   margin-bottom: 10% !important;
+  }
+
+  .trajetoria-texto h1 {
+    font-size: 1.8rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .carrossel-wrapper.section--visible{
+    gap: 0 !important;
+    transform: translateX(-35px) !important; 
+  }
+
+  .carrossel-container{
+    max-width: 300px;
+    justify-content: center !important;
+    align-items: centern !important;
+  }
+  .trajetoria-texto p {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .bloco-anotacoes-container{
+    transform: translateX(-15px) !important; 
+    margin-top: 10% !important;
+  }
+  .projetos-triangulos {
+    margin-top: 1rem !important;
+    width: 90px !important; 
+  }
+
+  /* CONTATO */
+
+  .contato-section {
+    min-height: auto !important; /* deixa a altura crescer naturalmente */
+    min-height: 90vh !important ;
+  }
+
+  .contato-title{
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: left !important; /* alinha o texto à esquerda */
+    max-width: 700px !important; /* limita largura igual ao conteúdo abaixo */
+    width: 400px;
+    margin-bottom: 1.5rem !important;
+    margin-left: 40% !important;
+  }
+
+  .contato-content {
+    flex-direction: column !important; /* empilha form e redes sociais */
+    align-items: center !important;
+    gap: 2rem !important; /* espaçamento entre form e redes */
+  }
+
+  /* EmailForm */
+  .emailform-container {
+    width: 350px !important;
+    max-width: 500px !important;
+    padding: 1rem !important;
+    margin-left: 25% !important;
+
+  }
+
+  .emailform-row {
+    flex-direction: column !important; /* empilha os inputs lado a lado */
+    gap: 1rem !important;
+  }
+
+  .emailform-group {
+    width: 100% !important;
+  }
+
+  .emailform-button {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  .redes-sociais{
+    margin-left: 25% !important;
+  }
+  /* Redes sociais */
+  .redes-cards {
+    max-width: 300px !important;
+    flex-direction: column !important; /* cada card embaixo do outro */
+    gap: 1rem !important;
+    width: 200px !important;
+    margin-top: 10% !important;
+  }
+  .rede-card{
+    width: 300px !important;
+
+  }
+}
+
+<<FILE_END: ./src/styles/globals.css>>
+
+<<FILE_START: ./src/styles/Home.css>>
+
+.page-container {
+  scroll-behavior: smooth;
+  color: #fff;
+}
+
+.section {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+
+.section--hidden {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+
+.home-section {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+  gap: 3rem;              
+  flex-wrap: wrap; 
+  padding-top: 5rem;        
+}
+
+.title {
+  font-size: 2rem;
+  color: #1B2D0E;
+  margin-bottom: 1rem;
+}
+
+.content-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1200px;
+}
+
+
+
+.terminal-container {
+  flex: 1;
+  min-width: 300px;
+}
+
+
+.photo-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo-placeholder {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  border: 2px dashed #00ffcc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #00ffcc;
+}
+
+.section--visible .zain {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.home-photo-container {
+  flex: 1;
+  min-width: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+
+
+.photo-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  transform: translateY(-35px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.photo-border {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  border: 3px solid #405D2D;
+  border-radius: 5px;
+  z-index: 1;
+  opacity: 0.8;
+}
+
+/* Radar apenas nos cantos da borda */
+.photo-radar-corner {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-style: solid;
+  border-width: 3px;
+  border-color: rgba(64, 93, 45, 0.6);
+  border-radius: 0;
+  pointer-events: none;
+  z-index: 1; /* abaixo da borda */
+  animation: radar-corner 2.5s ease-out infinite;
+}
+
+.radar-top-left {
+  top: -20px;   /* agora começa na borda */
+  left: -20px;
+  border-right: none;
+  border-bottom: none;
+  border-radius: 2px;
+}
+
+/* Radar canto inferior direito da borda */
+.radar-bottom-right {
+  bottom: -20px;  /* agora começa na borda */
+  right: -20px;
+  border-left: none;
+  border-top: none;
+  border-radius: 2px;
+}
+
+/* Animação de expansão */
+@keyframes radar-corner {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* Foto por cima do radar */
+.home-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 1%;
+  object-fit: cover;
+  z-index: 3;
+  position: relative;
+}
+
+.home-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 1%;
+  object-fit: cover;
+  justify-content: center;
+}
+
+
+.photo-corners {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.section--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+
+<<FILE_END: ./src/styles/Home.css>>
+
+<<FILE_START: ./src/styles/Navbar.css>>
+/* ====== NAVBAR BASE ====== */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+
+    /* Fundo com cor + fade */
+  background: linear-gradient(
+    rgba(254, 250, 224, 0.6),
+    rgba(254, 250, 224, 1)
+  );
+  backdrop-filter: blur(8px);
+}
+
+/* ====== LOGO ====== */
+.navbar-logo {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: #1B2D0E;
+}
+
+/* ====== LINKS ====== */
+.navbar-links {
+  display: flex;
+  gap: 1rem;
+}
+
+/* ====== LINK BASE ====== */
+.navbar-link {
+  color: #1B2D0E;
+  background: transparent;
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid transparent;
+  transition: all 0.25s ease-in-out;
+  cursor: pointer;
+  font-weight: 500;
+    transition: all 0.28s cubic-bezier(.2,.9,.2,1);
+  position: relative;
+}
+
+/* ====== LINK ATIVO ====== */
+.navbar-link.active {
+  border-color: #1B2D0E;
+  box-shadow: inset 0 -4px 0 rgba(27, 45, 14, 0.06);
+  transform: translateY(-1px);
+
+}
+
+/* ====== INTERAÇÕES ====== */
+.navbar-link:hover {
+    opacity: 0.95;
+  transform: translateY(-1px);
+ 
+}
+
+/* ====== CURSOR PERSONALIZADO ====== */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+
+
+<<FILE_END: ./src/styles/Navbar.css>>
+
+<<FILE_START: ./src/styles/Projetos.css>>
+.projetos-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200vh; 
+  color: #1b2d0e;
+}
+
+.projetos-title {
+  text-align: center;
+  color: #405d2d;
+  margin-bottom: 3rem !important;
+}
+
+.projetos-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.projetos-secundarios-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  color: #1b2d0e;
+}
+
+.projetos-secundarios-container {
+  display: flex;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1200px;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+  .carrossel-container{
+    margin-bottom: 10%;
+  }
+
+  .projetos-triangulos{
+    width: 90px;
+    transform: translateY(20px) !important;
+  }
+
+.trajetoria-texto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.trajetoria-texto p {
+  line-height: 1.6;
+  font-size: 1.1rem;
+}
+
+
+<<FILE_END: ./src/styles/Projetos.css>>
+
+<<FILE_START: ./src/styles/Sobre.css>>
+/* ==== SOBRE MIM ==== */
+
+.sobre-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  color: #1B2D0E;
+  max-width: 1200px;
+  background: transparent;
+  position: relative;
+}
+
+.sobre-content {
+  display: flex;
+  gap: 3rem;
+  width: 100%;
+  position: relative;
+  align-items: flex-start; 
+}
+
+.sobre-text {
+  max-width: 700px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; 
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.sobre-text p {
+  font-size: 1.1rem; 
+  line-height: 1.6;
+}
+
+.sobre-bolinhas {
+  width: 80px;
+  height: auto;
+  align-self: flex-start;
+  transform: translateY(30px); 
+} 
+
+/* Container da foto + bloco de notas */
+.sobre-photo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;  
+  justify-content: flex-start;
+  margin-left: auto; 
+  transform: translateY(-60px) !important;
+}
+
+
+.sobre-photo {
+  width: 250px;
+  height: 250px;
+  object-fit: cover;
+}
+
+.sobre-photo-text {
+  color: #1B2D0E;
+  font-size: 1rem;
+  text-align: center;
+}
+
+/* Animações existentes */
+.section--hidden {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.section--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsividade */
+<<FILE_END: ./src/styles/Sobre.css>>
+
+<<FILE_START: ./src/styles/Terminal.css>>
+/* Wrapper principal */
+.terminal-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 40rem; /* equivalente a max-w-xl */
+  margin: 0 auto;
+  outline: none;
+}
+
+/* Sombra de fundo (retângulo atrás) */
+.terminal-shadow {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  width: 100%;
+  height: 100%;
+  background-color: #566E45;
+  border-radius: 0.75rem;
+}
+
+/* Corpo do terminal (retângulo principal) */
+.terminal-body {
+  position: relative;
+  background-color: #6E8E59;
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  color: #FEFAE0;
+  z-index: 10;
+}
+
+/* Tabs superiores */
+.terminal-tabs {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  font-size: 1.125rem;
+}
+
+.terminal-tabs span {
+  cursor: default;
+}
+
+.terminal-tabs .active-tab {
+  border-bottom: 2px solid #FEFAE0;
+}
+
+/* Área de conteúdo do terminal */
+.terminal-content {
+  font-size: 1.125rem;
+  height: 8rem; /* equivalente a h-32 */
+  overflow-y: auto;
+  line-height: 1.5;
+}
+
+/* Linha padrão do terminal */
+.terminal-line {
+  white-space: nowrap;
+}
+
+/* Linha de resposta (TypingText) */
+.response-line {
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+/* Linha de input ativo */
+.terminal-input-line {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+<<FILE_END: ./src/styles/Terminal.css>>
+
+<<FILE_START: ./src/postcss.config.js>>
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+<<FILE_END: ./src/postcss.config.js>>
+
+<<FILE_START: ./src/tailwind.config.js>>
+module.exports = {
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+};
+<<FILE_END: ./src/tailwind.config.js>>
+
+<<FILE_START: ./.gitignore>>
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+<<FILE_END: ./.gitignore>>
+
+<<FILE_START: ./next-env.d.ts>>
+/// <reference types="next" />
+/// <reference types="next/image-types/global" />
+/// <reference types="next/navigation-types/compat/navigation" />
+/// <reference path="./.next/types/routes.d.ts" />
+
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
+
+<<FILE_END: ./next-env.d.ts>>
+
+<<FILE_START: ./next.config.ts>>
+import type { NextConfig } from "next";
+
+const repo = "/ra1461392321024";
+
+const nextConfig: NextConfig = {
+  output: "export",
+  basePath: repo, 
+
+  images: {
+    unoptimized: true,
+  },
+};
+
+export default nextConfig;
+<<FILE_END: ./next.config.ts>>
+
+<<FILE_START: ./package-lock.json>>
+{
+  "name": "meu-portfolio",
+  "version": "0.1.0",
+  "lockfileVersion": 3,
+  "requires": true,
+  "packages": {
+    "": {
+      "name": "meu-portfolio",
+      "version": "0.1.0",
+      "dependencies": {
+        "@emailjs/browser": "^4.4.1",
+        "framer-motion": "^12.23.24",
+        "lucide-react": "^0.548.0",
+        "next": "^15.5.18",
+        "react": "19.1.0",
+        "react-dom": "19.1.0"
+      },
+      "devDependencies": {
+        "@tailwindcss/postcss": "^4",
+        "@types/node": "^20",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "autoprefixer": "^10.4.21",
+        "gh-pages": "^6.3.0",
+        "postcss": "^8.5.6",
+        "tailwindcss": "^4.1.14",
+        "typescript": "^5"
+      }
+    },
+    "node_modules/@alloc/quick-lru": {
+      "version": "5.2.0",
+      "resolved": "https://registry.npmjs.org/@alloc/quick-lru/-/quick-lru-5.2.0.tgz",
+      "integrity": "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=10"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/@emailjs/browser": {
+      "version": "4.4.1",
+      "resolved": "https://registry.npmjs.org/@emailjs/browser/-/browser-4.4.1.tgz",
+      "integrity": "sha512-DGSlP9sPvyFba3to2A50kDtZ+pXVp/0rhmqs2LmbMS3I5J8FSOgLwzY2Xb4qfKlOVHh29EAutLYwe5yuEZmEFg==",
+      "license": "BSD-3-Clause",
+      "engines": {
+        "node": ">=14.0.0"
+      }
+    },
+    "node_modules/@emnapi/runtime": {
+      "version": "1.5.0",
+      "resolved": "https://registry.npmjs.org/@emnapi/runtime/-/runtime-1.5.0.tgz",
+      "integrity": "sha512-97/BJ3iXHww3djw6hYIfErCZFee7qCtrneuLa20UXFCOTCfBM2cvQHjWJ2EG0s0MtdNwInarqCTz35i4wWXHsQ==",
+      "license": "MIT",
+      "optional": true,
+      "dependencies": {
+        "tslib": "^2.4.0"
+      }
+    },
+    "node_modules/@img/colour": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/@img/colour/-/colour-1.0.0.tgz",
+      "integrity": "sha512-A5P/LfWGFSl6nsckYtjw9da+19jB8hkJ6ACTGcDfEJ0aE+l2n2El7dsVM7UVHZQ9s2lmYMWlrS21YLy2IR1LUw==",
+      "license": "MIT",
+      "optional": true,
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/@img/sharp-darwin-arm64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-arm64/-/sharp-darwin-arm64-0.34.4.tgz",
+      "integrity": "sha512-sitdlPzDVyvmINUdJle3TNHl+AG9QcwiAMsXmccqsCOMZNIdW2/7S26w0LyU8euiLVzFBL3dXPwVCq/ODnf2vA==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-darwin-arm64": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-darwin-x64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-darwin-x64/-/sharp-darwin-x64-0.34.4.tgz",
+      "integrity": "sha512-rZheupWIoa3+SOdF/IcUe1ah4ZDpKBGWcsPX6MT0lYniH9micvIU7HQkYTfrx5Xi8u+YqwLtxC/3vl8TQN6rMg==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-darwin-x64": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-libvips-darwin-arm64": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-arm64/-/sharp-libvips-darwin-arm64-1.2.3.tgz",
+      "integrity": "sha512-QzWAKo7kpHxbuHqUC28DZ9pIKpSi2ts2OJnoIGI26+HMgq92ZZ4vk8iJd4XsxN+tYfNJxzH6W62X5eTcsBymHw==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-libvips-darwin-x64": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-darwin-x64/-/sharp-libvips-darwin-x64-1.2.3.tgz",
+      "integrity": "sha512-Ju+g2xn1E2AKO6YBhxjj+ACcsPQRHT0bhpglxcEf+3uyPY+/gL8veniKoo96335ZaPo03bdDXMv0t+BBFAbmRA==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-libvips-linux-arm": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm/-/sharp-libvips-linux-arm-1.2.3.tgz",
+      "integrity": "sha512-x1uE93lyP6wEwGvgAIV0gP6zmaL/a0tGzJs/BIDDG0zeBhMnuUPm7ptxGhUbcGs4okDJrk4nxgrmxpib9g6HpA==",
+      "cpu": [
+        "arm"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-libvips-linux-arm64": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-arm64/-/sharp-libvips-linux-arm64-1.2.3.tgz",
+      "integrity": "sha512-I4RxkXU90cpufazhGPyVujYwfIm9Nk1QDEmiIsaPwdnm013F7RIceaCc87kAH+oUB1ezqEvC6ga4m7MSlqsJvQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-libvips-linux-ppc64": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-ppc64/-/sharp-libvips-linux-ppc64-1.2.3.tgz",
+      "integrity": "sha512-Y2T7IsQvJLMCBM+pmPbM3bKT/yYJvVtLJGfCs4Sp95SjvnFIjynbjzsa7dY1fRJX45FTSfDksbTp6AGWudiyCg==",
+      "cpu": [
+        "ppc64"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-libvips-linux-s390x": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-s390x/-/sharp-libvips-linux-s390x-1.2.3.tgz",
+      "integrity": "sha512-RgWrs/gVU7f+K7P+KeHFaBAJlNkD1nIZuVXdQv6S+fNA6syCcoboNjsV2Pou7zNlVdNQoQUpQTk8SWDHUA3y/w==",
+      "cpu": [
+        "s390x"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-libvips-linux-x64": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linux-x64/-/sharp-libvips-linux-x64-1.2.3.tgz",
+      "integrity": "sha512-3JU7LmR85K6bBiRzSUc/Ff9JBVIFVvq6bomKE0e63UXGeRw2HPVEjoJke1Yx+iU4rL7/7kUjES4dZ/81Qjhyxg==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-libvips-linuxmusl-arm64": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-arm64/-/sharp-libvips-linuxmusl-arm64-1.2.3.tgz",
+      "integrity": "sha512-F9q83RZ8yaCwENw1GieztSfj5msz7GGykG/BA+MOUefvER69K/ubgFHNeSyUu64amHIYKGDs4sRCMzXVj8sEyw==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-libvips-linuxmusl-x64": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/@img/sharp-libvips-linuxmusl-x64/-/sharp-libvips-linuxmusl-x64-1.2.3.tgz",
+      "integrity": "sha512-U5PUY5jbc45ANM6tSJpsgqmBF/VsL6LnxJmIf11kB7J5DctHgqm0SkuXzVWtIY90GnJxKnC/JT251TDnk1fu/g==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-linux-arm": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm/-/sharp-linux-arm-0.34.4.tgz",
+      "integrity": "sha512-Xyam4mlqM0KkTHYVSuc6wXRmM7LGN0P12li03jAnZ3EJWZqj83+hi8Y9UxZUbxsgsK1qOEwg7O0Bc0LjqQVtxA==",
+      "cpu": [
+        "arm"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-linux-arm": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-linux-arm64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-arm64/-/sharp-linux-arm64-0.34.4.tgz",
+      "integrity": "sha512-YXU1F/mN/Wu786tl72CyJjP/Ngl8mGHN1hST4BGl+hiW5jhCnV2uRVTNOcaYPs73NeT/H8Upm3y9582JVuZHrQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-linux-arm64": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-linux-ppc64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-ppc64/-/sharp-linux-ppc64-0.34.4.tgz",
+      "integrity": "sha512-F4PDtF4Cy8L8hXA2p3TO6s4aDt93v+LKmpcYFLAVdkkD3hSxZzee0rh6/+94FpAynsuMpLX5h+LRsSG3rIciUQ==",
+      "cpu": [
+        "ppc64"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-linux-ppc64": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-linux-s390x": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-s390x/-/sharp-linux-s390x-0.34.4.tgz",
+      "integrity": "sha512-qVrZKE9Bsnzy+myf7lFKvng6bQzhNUAYcVORq2P7bDlvmF6u2sCmK2KyEQEBdYk+u3T01pVsPrkj943T1aJAsw==",
+      "cpu": [
+        "s390x"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-linux-s390x": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-linux-x64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linux-x64/-/sharp-linux-x64-0.34.4.tgz",
+      "integrity": "sha512-ZfGtcp2xS51iG79c6Vhw9CWqQC8l2Ot8dygxoDoIQPTat/Ov3qAa8qpxSrtAEAJW+UjTXc4yxCjNfxm4h6Xm2A==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-linux-x64": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-linuxmusl-arm64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-arm64/-/sharp-linuxmusl-arm64-0.34.4.tgz",
+      "integrity": "sha512-8hDVvW9eu4yHWnjaOOR8kHVrew1iIX+MUgwxSuH2XyYeNRtLUe4VNioSqbNkB7ZYQJj9rUTT4PyRscyk2PXFKA==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-linuxmusl-arm64": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-linuxmusl-x64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-linuxmusl-x64/-/sharp-linuxmusl-x64-0.34.4.tgz",
+      "integrity": "sha512-lU0aA5L8QTlfKjpDCEFOZsTYGn3AEiO6db8W5aQDxj0nQkVrZWmN3ZP9sYKWJdtq3PWPhUNlqehWyXpYDcI9Sg==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "Apache-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-libvips-linuxmusl-x64": "1.2.3"
+      }
+    },
+    "node_modules/@img/sharp-wasm32": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-wasm32/-/sharp-wasm32-0.34.4.tgz",
+      "integrity": "sha512-33QL6ZO/qpRyG7woB/HUALz28WnTMI2W1jgX3Nu2bypqLIKx/QKMILLJzJjI+SIbvXdG9fUnmrxR7vbi1sTBeA==",
+      "cpu": [
+        "wasm32"
+      ],
+      "license": "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
+      "optional": true,
+      "dependencies": {
+        "@emnapi/runtime": "^1.5.0"
+      },
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-win32-arm64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-arm64/-/sharp-win32-arm64-0.34.4.tgz",
+      "integrity": "sha512-2Q250do/5WXTwxW3zjsEuMSv5sUU4Tq9VThWKlU2EYLm4MB7ZeMwF+SFJutldYODXF6jzc6YEOC+VfX0SZQPqA==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "Apache-2.0 AND LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-win32-ia32": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-ia32/-/sharp-win32-ia32-0.34.4.tgz",
+      "integrity": "sha512-3ZeLue5V82dT92CNL6rsal6I2weKw1cYu+rGKm8fOCCtJTR2gYeUfY3FqUnIJsMUPIH68oS5jmZ0NiJ508YpEw==",
+      "cpu": [
+        "ia32"
+      ],
+      "license": "Apache-2.0 AND LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@img/sharp-win32-x64": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.34.4.tgz",
+      "integrity": "sha512-xIyj4wpYs8J18sVN3mSQjwrw7fKUqRw+Z5rnHNCy5fYTxigBz81u5mOMPmFumwjcn8+ld1ppptMBCLic1nz6ig==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "Apache-2.0 AND LGPL-3.0-or-later",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      }
+    },
+    "node_modules/@isaacs/fs-minipass": {
+      "version": "4.0.1",
+      "resolved": "https://registry.npmjs.org/@isaacs/fs-minipass/-/fs-minipass-4.0.1.tgz",
+      "integrity": "sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "minipass": "^7.0.4"
+      },
+      "engines": {
+        "node": ">=18.0.0"
+      }
+    },
+    "node_modules/@jridgewell/gen-mapping": {
+      "version": "0.3.13",
+      "resolved": "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz",
+      "integrity": "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/sourcemap-codec": "^1.5.0",
+        "@jridgewell/trace-mapping": "^0.3.24"
+      }
+    },
+    "node_modules/@jridgewell/remapping": {
+      "version": "2.3.5",
+      "resolved": "https://registry.npmjs.org/@jridgewell/remapping/-/remapping-2.3.5.tgz",
+      "integrity": "sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/gen-mapping": "^0.3.5",
+        "@jridgewell/trace-mapping": "^0.3.24"
+      }
+    },
+    "node_modules/@jridgewell/resolve-uri": {
+      "version": "3.1.2",
+      "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz",
+      "integrity": "sha512-bRISgCIjP20/tbWSPWMEi54QVPRZExkuD9lJL+UIxUKtwVJA8wW1Trb1jMs1RFXo1CBTNZ/5hpC9QvmKWdopKw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=6.0.0"
+      }
+    },
+    "node_modules/@jridgewell/sourcemap-codec": {
+      "version": "1.5.5",
+      "resolved": "https://registry.npmjs.org/@jridgewell/sourcemap-codec/-/sourcemap-codec-1.5.5.tgz",
+      "integrity": "sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/@jridgewell/trace-mapping": {
+      "version": "0.3.31",
+      "resolved": "https://registry.npmjs.org/@jridgewell/trace-mapping/-/trace-mapping-0.3.31.tgz",
+      "integrity": "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/resolve-uri": "^3.1.0",
+        "@jridgewell/sourcemap-codec": "^1.4.14"
+      }
+    },
+    "node_modules/@next/env": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/env/-/env-15.5.18.tgz",
+      "integrity": "sha512-hAV85Ckd9QR6RvH04MEKwsfLTksvFpO47j9xwtoIuvuPnlwecpSi+uZTtm8HirVbtlI2Fnz//xpcSTjFdyJk+g==",
+      "license": "MIT"
+    },
+    "node_modules/@next/swc-darwin-arm64": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-arm64/-/swc-darwin-arm64-15.5.18.tgz",
+      "integrity": "sha512-w0WvQf1n+txiwns/9pwIQteCJpZTbxzO2SE0FLcwuD4v0WEh1JPOjdyxWL21XwJsdpx8cFRjyzxzCS/siP7HcQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@next/swc-darwin-x64": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/swc-darwin-x64/-/swc-darwin-x64-15.5.18.tgz",
+      "integrity": "sha512-znn71QmDuxm+BOaglihMZfvyySMnNljkVIY5Z2TCssBmm+WqL6c19VhtH5ktFkHa8EZ2bnTUpcNcmNSQsg67og==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@next/swc-linux-arm64-gnu": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-gnu/-/swc-linux-arm64-gnu-15.5.18.tgz",
+      "integrity": "sha512-yPPe5MNL+igZUa+OsqQJisqSfh6oarIuA1Q0BDxljGJhRQyZeP+WRHh7rs/jZUGMh5aY0YdIjXZG0VohkKkUdw==",
+      "cpu": [
+        "arm64"
+      ],
+      "libc": [
+        "glibc"
+      ],
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@next/swc-linux-arm64-musl": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-arm64-musl/-/swc-linux-arm64-musl-15.5.18.tgz",
+      "integrity": "sha512-glaCczEWIrHsokFZ3pP08U4BpKxwIdnT+txdOM32OBgpL9Yw4aqx8NejmgtZQZOdstQ5f0L3CasIZudzCuD+nw==",
+      "cpu": [
+        "arm64"
+      ],
+      "libc": [
+        "musl"
+      ],
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@next/swc-linux-x64-gnu": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-gnu/-/swc-linux-x64-gnu-15.5.18.tgz",
+      "integrity": "sha512-oUfg2EgJmU3R0OCOWiokGFUTvZiPfXtriXiuF3YNxRoROCdgvTedHIzYoeKH34gsZxS/V7mHbfq2hpAHwhH1/A==",
+      "cpu": [
+        "x64"
+      ],
+      "libc": [
+        "glibc"
+      ],
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@next/swc-linux-x64-musl": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/swc-linux-x64-musl/-/swc-linux-x64-musl-15.5.18.tgz",
+      "integrity": "sha512-JLxSP3KTd9iu/bvUMQxH7RJo9xKSHf55/6RPE4a6FTSZygGn7uvZbCej0AHXydwkggQGSD9UddSjwv6Xz5ESfA==",
+      "cpu": [
+        "x64"
+      ],
+      "libc": [
+        "musl"
+      ],
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@next/swc-win32-arm64-msvc": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/swc-win32-arm64-msvc/-/swc-win32-arm64-msvc-15.5.18.tgz",
+      "integrity": "sha512-ir1v7enP52K2HNz3tQQvwF+x7VNxBk1ciiZ18WBPvxf4C59IqdfmHPJYK3vH7rSxpuCVw/8C712wTXNAtEp+NA==",
+      "cpu": [
+        "arm64"
+      ],
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@next/swc-win32-x64-msvc": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-15.5.18.tgz",
+      "integrity": "sha512-LIu5me6QTANCd25E7I5uIEfvgQ06RK7tvHAbYo3zCb3VpxQEPvMcSpd87NwUABDT6MbGPdEGR5VRiK4PPTJhQg==",
+      "cpu": [
+        "x64"
+      ],
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@nodelib/fs.scandir": {
+      "version": "2.1.5",
+      "resolved": "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz",
+      "integrity": "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@nodelib/fs.stat": "2.0.5",
+        "run-parallel": "^1.1.9"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/@nodelib/fs.stat": {
+      "version": "2.0.5",
+      "resolved": "https://registry.npmjs.org/@nodelib/fs.stat/-/fs.stat-2.0.5.tgz",
+      "integrity": "sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/@nodelib/fs.walk": {
+      "version": "1.2.8",
+      "resolved": "https://registry.npmjs.org/@nodelib/fs.walk/-/fs.walk-1.2.8.tgz",
+      "integrity": "sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@nodelib/fs.scandir": "2.1.5",
+        "fastq": "^1.6.0"
+      },
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/@swc/helpers": {
+      "version": "0.5.15",
+      "resolved": "https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.15.tgz",
+      "integrity": "sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==",
+      "license": "Apache-2.0",
+      "dependencies": {
+        "tslib": "^2.8.0"
+      }
+    },
+    "node_modules/@tailwindcss/node": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.1.14.tgz",
+      "integrity": "sha512-hpz+8vFk3Ic2xssIA3e01R6jkmsAhvkQdXlEbRTk6S10xDAtiQiM3FyvZVGsucefq764euO/b8WUW9ysLdThHw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/remapping": "^2.3.4",
+        "enhanced-resolve": "^5.18.3",
+        "jiti": "^2.6.0",
+        "lightningcss": "1.30.1",
+        "magic-string": "^0.30.19",
+        "source-map-js": "^1.2.1",
+        "tailwindcss": "4.1.14"
+      }
+    },
+    "node_modules/@tailwindcss/oxide": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.1.14.tgz",
+      "integrity": "sha512-23yx+VUbBwCg2x5XWdB8+1lkPajzLmALEfMb51zZUBYaYVPDQvBSD/WYDqiVyBIo2BZFa3yw1Rpy3G2Jp+K0dw==",
+      "dev": true,
+      "hasInstallScript": true,
+      "license": "MIT",
+      "dependencies": {
+        "detect-libc": "^2.0.4",
+        "tar": "^7.5.1"
+      },
+      "engines": {
+        "node": ">= 10"
+      },
+      "optionalDependencies": {
+        "@tailwindcss/oxide-android-arm64": "4.1.14",
+        "@tailwindcss/oxide-darwin-arm64": "4.1.14",
+        "@tailwindcss/oxide-darwin-x64": "4.1.14",
+        "@tailwindcss/oxide-freebsd-x64": "4.1.14",
+        "@tailwindcss/oxide-linux-arm-gnueabihf": "4.1.14",
+        "@tailwindcss/oxide-linux-arm64-gnu": "4.1.14",
+        "@tailwindcss/oxide-linux-arm64-musl": "4.1.14",
+        "@tailwindcss/oxide-linux-x64-gnu": "4.1.14",
+        "@tailwindcss/oxide-linux-x64-musl": "4.1.14",
+        "@tailwindcss/oxide-wasm32-wasi": "4.1.14",
+        "@tailwindcss/oxide-win32-arm64-msvc": "4.1.14",
+        "@tailwindcss/oxide-win32-x64-msvc": "4.1.14"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-android-arm64": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-android-arm64/-/oxide-android-arm64-4.1.14.tgz",
+      "integrity": "sha512-a94ifZrGwMvbdeAxWoSuGcIl6/DOP5cdxagid7xJv6bwFp3oebp7y2ImYsnZBMTwjn5Ev5xESvS3FFYUGgPODQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "android"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-darwin-arm64": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-arm64/-/oxide-darwin-arm64-4.1.14.tgz",
+      "integrity": "sha512-HkFP/CqfSh09xCnrPJA7jud7hij5ahKyWomrC3oiO2U9i0UjP17o9pJbxUN0IJ471GTQQmzwhp0DEcpbp4MZTA==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-darwin-x64": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-x64/-/oxide-darwin-x64-4.1.14.tgz",
+      "integrity": "sha512-eVNaWmCgdLf5iv6Qd3s7JI5SEFBFRtfm6W0mphJYXgvnDEAZ5sZzqmI06bK6xo0IErDHdTA5/t7d4eTfWbWOFw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-freebsd-x64": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-freebsd-x64/-/oxide-freebsd-x64-4.1.14.tgz",
+      "integrity": "sha512-QWLoRXNikEuqtNb0dhQN6wsSVVjX6dmUFzuuiL09ZeXju25dsei2uIPl71y2Ic6QbNBsB4scwBoFnlBfabHkEw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-linux-arm-gnueabihf": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm-gnueabihf/-/oxide-linux-arm-gnueabihf-4.1.14.tgz",
+      "integrity": "sha512-VB4gjQni9+F0VCASU+L8zSIyjrLLsy03sjcR3bM0V2g4SNamo0FakZFKyUQ96ZVwGK4CaJsc9zd/obQy74o0Fw==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-linux-arm64-gnu": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.1.14.tgz",
+      "integrity": "sha512-qaEy0dIZ6d9vyLnmeg24yzA8XuEAD9WjpM5nIM1sUgQ/Zv7cVkharPDQcmm/t/TvXoKo/0knI3me3AGfdx6w1w==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-linux-arm64-musl": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-musl/-/oxide-linux-arm64-musl-4.1.14.tgz",
+      "integrity": "sha512-ISZjT44s59O8xKsPEIesiIydMG/sCXoMBCqsphDm/WcbnuWLxxb+GcvSIIA5NjUw6F8Tex7s5/LM2yDy8RqYBQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-linux-x64-gnu": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.1.14.tgz",
+      "integrity": "sha512-02c6JhLPJj10L2caH4U0zF8Hji4dOeahmuMl23stk0MU1wfd1OraE7rOloidSF8W5JTHkFdVo/O7uRUJJnUAJg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-linux-x64-musl": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.1.14.tgz",
+      "integrity": "sha512-TNGeLiN1XS66kQhxHG/7wMeQDOoL0S33x9BgmydbrWAb9Qw0KYdd8o1ifx4HOGDWhVmJ+Ul+JQ7lyknQFilO3Q==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-wasm32-wasi": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.1.14.tgz",
+      "integrity": "sha512-uZYAsaW/jS/IYkd6EWPJKW/NlPNSkWkBlaeVBi/WsFQNP05/bzkebUL8FH1pdsqx4f2fH/bWFcUABOM9nfiJkQ==",
+      "bundleDependencies": [
+        "@napi-rs/wasm-runtime",
+        "@emnapi/core",
+        "@emnapi/runtime",
+        "@tybys/wasm-util",
+        "@emnapi/wasi-threads",
+        "tslib"
+      ],
+      "cpu": [
+        "wasm32"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "dependencies": {
+        "@emnapi/core": "^1.5.0",
+        "@emnapi/runtime": "^1.5.0",
+        "@emnapi/wasi-threads": "^1.1.0",
+        "@napi-rs/wasm-runtime": "^1.0.5",
+        "@tybys/wasm-util": "^0.10.1",
+        "tslib": "^2.4.0"
+      },
+      "engines": {
+        "node": ">=14.0.0"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-win32-arm64-msvc": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-win32-arm64-msvc/-/oxide-win32-arm64-msvc-4.1.14.tgz",
+      "integrity": "sha512-Az0RnnkcvRqsuoLH2Z4n3JfAef0wElgzHD5Aky/e+0tBUxUhIeIqFBTMNQvmMRSP15fWwmvjBxZ3Q8RhsDnxAA==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/oxide-win32-x64-msvc": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.1.14.tgz",
+      "integrity": "sha512-ttblVGHgf68kEE4om1n/n44I0yGPkCPbLsqzjvybhpwa6mKKtgFfAzy6btc3HRmuW7nHe0OOrSeNP9sQmmH9XA==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MIT",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">= 10"
+      }
+    },
+    "node_modules/@tailwindcss/postcss": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/@tailwindcss/postcss/-/postcss-4.1.14.tgz",
+      "integrity": "sha512-BdMjIxy7HUNThK87C7BC8I1rE8BVUsfNQSI5siQ4JK3iIa3w0XyVvVL9SXLWO//CtYTcp1v7zci0fYwJOjB+Zg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@alloc/quick-lru": "^5.2.0",
+        "@tailwindcss/node": "4.1.14",
+        "@tailwindcss/oxide": "4.1.14",
+        "postcss": "^8.4.41",
+        "tailwindcss": "4.1.14"
+      }
+    },
+    "node_modules/@types/node": {
+      "version": "20.19.21",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-20.19.21.tgz",
+      "integrity": "sha512-CsGG2P3I5y48RPMfprQGfy4JPRZ6csfC3ltBZSRItG3ngggmNY/qs2uZKp4p9VbrpqNNSMzUZNFZKzgOGnd/VA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "undici-types": "~6.21.0"
+      }
+    },
+    "node_modules/@types/react": {
+      "version": "19.2.2",
+      "resolved": "https://registry.npmjs.org/@types/react/-/react-19.2.2.tgz",
+      "integrity": "sha512-6mDvHUFSjyT2B2yeNx2nUgMxh9LtOWvkhIU3uePn2I2oyNymUAX1NIsdgviM4CH+JSrp2D2hsMvJOkxY+0wNRA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "csstype": "^3.0.2"
+      }
+    },
+    "node_modules/@types/react-dom": {
+      "version": "19.2.2",
+      "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.2.2.tgz",
+      "integrity": "sha512-9KQPoO6mZCi7jcIStSnlOWn2nEF3mNmyr3rIAsGnAbQKYbRLyqmeSc39EVgtxXVia+LMT8j3knZLAZAh+xLmrw==",
+      "dev": true,
+      "license": "MIT",
+      "peerDependencies": {
+        "@types/react": "^19.2.0"
+      }
+    },
+    "node_modules/array-union": {
+      "version": "2.1.0",
+      "resolved": "https://registry.npmjs.org/array-union/-/array-union-2.1.0.tgz",
+      "integrity": "sha512-HGyxoOTYUyCM6stUe6EJgnd4EoewAI7zMdfqO+kGjnlZmBDz/cR5pf8r/cR4Wq60sL/p0IkcjUEEPwS3GFrIyw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/async": {
+      "version": "3.2.6",
+      "resolved": "https://registry.npmjs.org/async/-/async-3.2.6.tgz",
+      "integrity": "sha512-htCUDlxyyCLMgaM3xXg0C0LW2xqfuQ6p05pCEIsXuyQ+a1koYKTuBMzRNwmybfLgvJDMd0r1LTn4+E0Ti6C2AA==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/autoprefixer": {
+      "version": "10.4.21",
+      "resolved": "https://registry.npmjs.org/autoprefixer/-/autoprefixer-10.4.21.tgz",
+      "integrity": "sha512-O+A6LWV5LDHSJD3LjHYoNi4VLsj/Whi7k6zG12xTYaU4cQ8oxQGckXNX8cRHK5yOZ/ppVHe0ZBXGzSV9jXdVbQ==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/autoprefixer"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "browserslist": "^4.24.4",
+        "caniuse-lite": "^1.0.30001702",
+        "fraction.js": "^4.3.7",
+        "normalize-range": "^0.1.2",
+        "picocolors": "^1.1.1",
+        "postcss-value-parser": "^4.2.0"
+      },
+      "bin": {
+        "autoprefixer": "bin/autoprefixer"
+      },
+      "engines": {
+        "node": "^10 || ^12 || >=14"
+      },
+      "peerDependencies": {
+        "postcss": "^8.1.0"
+      }
+    },
+    "node_modules/baseline-browser-mapping": {
+      "version": "2.8.16",
+      "resolved": "https://registry.npmjs.org/baseline-browser-mapping/-/baseline-browser-mapping-2.8.16.tgz",
+      "integrity": "sha512-OMu3BGQ4E7P1ErFsIPpbJh0qvDudM/UuJeHgkAvfWe+0HFJCXh+t/l8L6fVLR55RI/UbKrVLnAXZSVwd9ysWYw==",
+      "dev": true,
+      "license": "Apache-2.0",
+      "bin": {
+        "baseline-browser-mapping": "dist/cli.js"
+      }
+    },
+    "node_modules/braces": {
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
+      "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "fill-range": "^7.1.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/browserslist": {
+      "version": "4.26.3",
+      "resolved": "https://registry.npmjs.org/browserslist/-/browserslist-4.26.3.tgz",
+      "integrity": "sha512-lAUU+02RFBuCKQPj/P6NgjlbCnLBMp4UtgTx7vNHd3XSIJF87s9a5rA3aH2yw3GS9DqZAUbOtZdCCiZeVRqt0w==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/browserslist"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/browserslist"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "baseline-browser-mapping": "^2.8.9",
+        "caniuse-lite": "^1.0.30001746",
+        "electron-to-chromium": "^1.5.227",
+        "node-releases": "^2.0.21",
+        "update-browserslist-db": "^1.1.3"
+      },
+      "bin": {
+        "browserslist": "cli.js"
+      },
+      "engines": {
+        "node": "^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7"
+      }
+    },
+    "node_modules/caniuse-lite": {
+      "version": "1.0.30001750",
+      "resolved": "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001750.tgz",
+      "integrity": "sha512-cuom0g5sdX6rw00qOoLNSFCJ9/mYIsuSOA+yzpDw8eopiFqcVwQvZHqov0vmEighRxX++cfC0Vg1G+1Iy/mSpQ==",
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/browserslist"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/caniuse-lite"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "CC-BY-4.0"
+    },
+    "node_modules/chownr": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/chownr/-/chownr-3.0.0.tgz",
+      "integrity": "sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==",
+      "dev": true,
+      "license": "BlueOak-1.0.0",
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/client-only": {
+      "version": "0.0.1",
+      "resolved": "https://registry.npmjs.org/client-only/-/client-only-0.0.1.tgz",
+      "integrity": "sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==",
+      "license": "MIT"
+    },
+    "node_modules/commander": {
+      "version": "13.1.0",
+      "resolved": "https://registry.npmjs.org/commander/-/commander-13.1.0.tgz",
+      "integrity": "sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/commondir": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/commondir/-/commondir-1.0.1.tgz",
+      "integrity": "sha512-W9pAhw0ja1Edb5GVdIF1mjZw/ASI0AlShXM83UUGe2DVr5TdAPEA1OA8m/g8zWp9x6On7gqufY+FatDbC3MDQg==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/csstype": {
+      "version": "3.1.3",
+      "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.1.3.tgz",
+      "integrity": "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/detect-libc": {
+      "version": "2.1.2",
+      "resolved": "https://registry.npmjs.org/detect-libc/-/detect-libc-2.1.2.tgz",
+      "integrity": "sha512-Btj2BOOO83o3WyH59e8MgXsxEQVcarkUOpEYrubB0urwnN10yQ364rsiByU11nZlqWYZm05i/of7io4mzihBtQ==",
+      "devOptional": true,
+      "license": "Apache-2.0",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/dir-glob": {
+      "version": "3.0.1",
+      "resolved": "https://registry.npmjs.org/dir-glob/-/dir-glob-3.0.1.tgz",
+      "integrity": "sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "path-type": "^4.0.0"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/electron-to-chromium": {
+      "version": "1.5.235",
+      "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.235.tgz",
+      "integrity": "sha512-i/7ntLFwOdoHY7sgjlTIDo4Sl8EdoTjWIaKinYOVfC6bOp71bmwenyZthWHcasxgHDNWbWxvG9M3Ia116zIaYQ==",
+      "dev": true,
+      "license": "ISC"
+    },
+    "node_modules/email-addresses": {
+      "version": "5.0.0",
+      "resolved": "https://registry.npmjs.org/email-addresses/-/email-addresses-5.0.0.tgz",
+      "integrity": "sha512-4OIPYlA6JXqtVn8zpHpGiI7vE6EQOAg16aGnDMIAlZVinnoZ8208tW1hAbjWydgN/4PLTT9q+O1K6AH/vALJGw==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/enhanced-resolve": {
+      "version": "5.18.3",
+      "resolved": "https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.18.3.tgz",
+      "integrity": "sha512-d4lC8xfavMeBjzGr2vECC3fsGXziXZQyJxD868h2M/mBI3PwAuODxAkLkq5HYuvrPYcUtiLzsTo8U3PgX3Ocww==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "graceful-fs": "^4.2.4",
+        "tapable": "^2.2.0"
+      },
+      "engines": {
+        "node": ">=10.13.0"
+      }
+    },
+    "node_modules/escalade": {
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/escalade/-/escalade-3.2.0.tgz",
+      "integrity": "sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=6"
+      }
+    },
+    "node_modules/escape-string-regexp": {
+      "version": "1.0.5",
+      "resolved": "https://registry.npmjs.org/escape-string-regexp/-/escape-string-regexp-1.0.5.tgz",
+      "integrity": "sha512-vbRorB5FUQWvla16U8R/qgaFIya2qGzwDrNmCZuYKrbdSUMG6I1ZCGQRefkRVhuOkIGVne7BQ35DSfo1qvJqFg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.8.0"
+      }
+    },
+    "node_modules/fast-glob": {
+      "version": "3.3.3",
+      "resolved": "https://registry.npmjs.org/fast-glob/-/fast-glob-3.3.3.tgz",
+      "integrity": "sha512-7MptL8U0cqcFdzIzwOTHoilX9x5BrNqye7Z/LuC7kCMRio1EMSyqRK3BEAUD7sXRq4iT4AzTVuZdhgQ2TCvYLg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@nodelib/fs.stat": "^2.0.2",
+        "@nodelib/fs.walk": "^1.2.3",
+        "glob-parent": "^5.1.2",
+        "merge2": "^1.3.0",
+        "micromatch": "^4.0.8"
+      },
+      "engines": {
+        "node": ">=8.6.0"
+      }
+    },
+    "node_modules/fastq": {
+      "version": "1.20.1",
+      "resolved": "https://registry.npmjs.org/fastq/-/fastq-1.20.1.tgz",
+      "integrity": "sha512-GGToxJ/w1x32s/D2EKND7kTil4n8OVk/9mycTc4VDza13lOvpUZTGX3mFSCtV9ksdGBVzvsyAVLM6mHFThxXxw==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "reusify": "^1.0.4"
+      }
+    },
+    "node_modules/filename-reserved-regex": {
+      "version": "2.0.0",
+      "resolved": "https://registry.npmjs.org/filename-reserved-regex/-/filename-reserved-regex-2.0.0.tgz",
+      "integrity": "sha512-lc1bnsSr4L4Bdif8Xb/qrtokGbq5zlsms/CYH8PP+WtCkGNF65DPiQY8vG3SakEdRn8Dlnm+gW/qWKKjS5sZzQ==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=4"
+      }
+    },
+    "node_modules/filenamify": {
+      "version": "4.3.0",
+      "resolved": "https://registry.npmjs.org/filenamify/-/filenamify-4.3.0.tgz",
+      "integrity": "sha512-hcFKyUG57yWGAzu1CMt/dPzYZuv+jAJUT85bL8mrXvNe6hWj6yEHEc4EdcgiA6Z3oi1/9wXJdZPXF2dZNgwgOg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "filename-reserved-regex": "^2.0.0",
+        "strip-outer": "^1.0.1",
+        "trim-repeated": "^1.0.0"
+      },
+      "engines": {
+        "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/fill-range": {
+      "version": "7.1.1",
+      "resolved": "https://registry.npmjs.org/fill-range/-/fill-range-7.1.1.tgz",
+      "integrity": "sha512-YsGpe3WHLK8ZYi4tWDg2Jy3ebRz2rXowDxnld4bkQB00cc/1Zw9AWnC0i9ztDJitivtQvaI9KaLyKrc+hBW0yg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "to-regex-range": "^5.0.1"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/find-cache-dir": {
+      "version": "3.3.2",
+      "resolved": "https://registry.npmjs.org/find-cache-dir/-/find-cache-dir-3.3.2.tgz",
+      "integrity": "sha512-wXZV5emFEjrridIgED11OoUKLxiYjAcqot/NJdAkOhlJ+vGzwhOAfcG5OX1jP+S0PcjEn8bdMJv+g2jwQ3Onig==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "commondir": "^1.0.1",
+        "make-dir": "^3.0.2",
+        "pkg-dir": "^4.1.0"
+      },
+      "engines": {
+        "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/avajs/find-cache-dir?sponsor=1"
+      }
+    },
+    "node_modules/find-up": {
+      "version": "4.1.0",
+      "resolved": "https://registry.npmjs.org/find-up/-/find-up-4.1.0.tgz",
+      "integrity": "sha512-PpOwAdQ/YlXQ2vj8a3h8IipDuYRi3wceVQQGYWxNINccq40Anw7BlsEXCMbt1Zt+OLA6Fq9suIpIWD0OsnISlw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "locate-path": "^5.0.0",
+        "path-exists": "^4.0.0"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/fraction.js": {
+      "version": "4.3.7",
+      "resolved": "https://registry.npmjs.org/fraction.js/-/fraction.js-4.3.7.tgz",
+      "integrity": "sha512-ZsDfxO51wGAXREY55a7la9LScWpwv9RxIrYABrlvOFBlH/ShPnrtsXeuUIfXKKOVicNxQ+o8JTbJvjS4M89yew==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": "*"
+      },
+      "funding": {
+        "type": "patreon",
+        "url": "https://github.com/sponsors/rawify"
+      }
+    },
+    "node_modules/framer-motion": {
+      "version": "12.23.24",
+      "resolved": "https://registry.npmjs.org/framer-motion/-/framer-motion-12.23.24.tgz",
+      "integrity": "sha512-HMi5HRoRCTou+3fb3h9oTLyJGBxHfW+HnNE25tAXOvVx/IvwMHK0cx7IR4a2ZU6sh3IX1Z+4ts32PcYBOqka8w==",
+      "license": "MIT",
+      "dependencies": {
+        "motion-dom": "^12.23.23",
+        "motion-utils": "^12.23.6",
+        "tslib": "^2.4.0"
+      },
+      "peerDependencies": {
+        "@emotion/is-prop-valid": "*",
+        "react": "^18.0.0 || ^19.0.0",
+        "react-dom": "^18.0.0 || ^19.0.0"
+      },
+      "peerDependenciesMeta": {
+        "@emotion/is-prop-valid": {
+          "optional": true
+        },
+        "react": {
+          "optional": true
+        },
+        "react-dom": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/fs-extra": {
+      "version": "11.3.5",
+      "resolved": "https://registry.npmjs.org/fs-extra/-/fs-extra-11.3.5.tgz",
+      "integrity": "sha512-eKpRKAovdpZtR1WopLHxlBWvAgPny3c4gX1G5Jhwmmw4XJj0ifSD5qB5TOo8hmA0wlRKDAOAhEE1yVPgs6Fgcg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "graceful-fs": "^4.2.0",
+        "jsonfile": "^6.0.1",
+        "universalify": "^2.0.0"
+      },
+      "engines": {
+        "node": ">=14.14"
+      }
+    },
+    "node_modules/gh-pages": {
+      "version": "6.3.0",
+      "resolved": "https://registry.npmjs.org/gh-pages/-/gh-pages-6.3.0.tgz",
+      "integrity": "sha512-Ot5lU6jK0Eb+sszG8pciXdjMXdBJ5wODvgjR+imihTqsUWF2K6dJ9HST55lgqcs8wWcw6o6wAsUzfcYRhJPXbA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "async": "^3.2.4",
+        "commander": "^13.0.0",
+        "email-addresses": "^5.0.0",
+        "filenamify": "^4.3.0",
+        "find-cache-dir": "^3.3.1",
+        "fs-extra": "^11.1.1",
+        "globby": "^11.1.0"
+      },
+      "bin": {
+        "gh-pages": "bin/gh-pages.js",
+        "gh-pages-clean": "bin/gh-pages-clean.js"
+      },
+      "engines": {
+        "node": ">=10"
+      }
+    },
+    "node_modules/glob-parent": {
+      "version": "5.1.2",
+      "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz",
+      "integrity": "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow==",
+      "dev": true,
+      "license": "ISC",
+      "dependencies": {
+        "is-glob": "^4.0.1"
+      },
+      "engines": {
+        "node": ">= 6"
+      }
+    },
+    "node_modules/globby": {
+      "version": "11.1.0",
+      "resolved": "https://registry.npmjs.org/globby/-/globby-11.1.0.tgz",
+      "integrity": "sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "array-union": "^2.1.0",
+        "dir-glob": "^3.0.1",
+        "fast-glob": "^3.2.9",
+        "ignore": "^5.2.0",
+        "merge2": "^1.4.1",
+        "slash": "^3.0.0"
+      },
+      "engines": {
+        "node": ">=10"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/graceful-fs": {
+      "version": "4.2.11",
+      "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
+      "integrity": "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==",
+      "dev": true,
+      "license": "ISC"
+    },
+    "node_modules/ignore": {
+      "version": "5.3.2",
+      "resolved": "https://registry.npmjs.org/ignore/-/ignore-5.3.2.tgz",
+      "integrity": "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 4"
+      }
+    },
+    "node_modules/is-extglob": {
+      "version": "2.1.1",
+      "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
+      "integrity": "sha512-SbKbANkN603Vi4jEZv49LeVJMn4yGwsbzZworEoyEiutsN3nJYdbO36zfhGJ6QEDpOZIFkDtnq5JRxmvl3jsoQ==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/is-glob": {
+      "version": "4.0.3",
+      "resolved": "https://registry.npmjs.org/is-glob/-/is-glob-4.0.3.tgz",
+      "integrity": "sha512-xelSayHH36ZgE7ZWhli7pW34hNbNl8Ojv5KVmkJD4hBdD3th8Tfk9vYasLM+mXWOZhFkgZfxhLSnrwRr4elSSg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "is-extglob": "^2.1.1"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/is-number": {
+      "version": "7.0.0",
+      "resolved": "https://registry.npmjs.org/is-number/-/is-number-7.0.0.tgz",
+      "integrity": "sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.12.0"
+      }
+    },
+    "node_modules/jiti": {
+      "version": "2.6.1",
+      "resolved": "https://registry.npmjs.org/jiti/-/jiti-2.6.1.tgz",
+      "integrity": "sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==",
+      "dev": true,
+      "license": "MIT",
+      "bin": {
+        "jiti": "lib/jiti-cli.mjs"
+      }
+    },
+    "node_modules/jsonfile": {
+      "version": "6.2.1",
+      "resolved": "https://registry.npmjs.org/jsonfile/-/jsonfile-6.2.1.tgz",
+      "integrity": "sha512-zwOTdL3rFQ/lRdBnntKVOX6k5cKJwEc1HdilT71BWEu7J41gXIB2MRp+vxduPSwZJPWBxEzv4yH1wYLJGUHX4Q==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "universalify": "^2.0.0"
+      },
+      "optionalDependencies": {
+        "graceful-fs": "^4.1.6"
+      }
+    },
+    "node_modules/lightningcss": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss/-/lightningcss-1.30.1.tgz",
+      "integrity": "sha512-xi6IyHML+c9+Q3W0S4fCQJOym42pyurFiJUHEcEyHS0CeKzia4yZDEsLlqOFykxOdHpNy0NmvVO31vcSqAxJCg==",
+      "dev": true,
+      "license": "MPL-2.0",
+      "dependencies": {
+        "detect-libc": "^2.0.3"
+      },
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      },
+      "optionalDependencies": {
+        "lightningcss-darwin-arm64": "1.30.1",
+        "lightningcss-darwin-x64": "1.30.1",
+        "lightningcss-freebsd-x64": "1.30.1",
+        "lightningcss-linux-arm-gnueabihf": "1.30.1",
+        "lightningcss-linux-arm64-gnu": "1.30.1",
+        "lightningcss-linux-arm64-musl": "1.30.1",
+        "lightningcss-linux-x64-gnu": "1.30.1",
+        "lightningcss-linux-x64-musl": "1.30.1",
+        "lightningcss-win32-arm64-msvc": "1.30.1",
+        "lightningcss-win32-x64-msvc": "1.30.1"
+      }
+    },
+    "node_modules/lightningcss-darwin-arm64": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-darwin-arm64/-/lightningcss-darwin-arm64-1.30.1.tgz",
+      "integrity": "sha512-c8JK7hyE65X1MHMN+Viq9n11RRC7hgin3HhYKhrMyaXflk5GVplZ60IxyoVtzILeKr+xAJwg6zK6sjTBJ0FKYQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-darwin-x64": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-darwin-x64/-/lightningcss-darwin-x64-1.30.1.tgz",
+      "integrity": "sha512-k1EvjakfumAQoTfcXUcHQZhSpLlkAuEkdMBsI/ivWw9hL+7FtilQc0Cy3hrx0AAQrVtQAbMI7YjCgYgvn37PzA==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "darwin"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-freebsd-x64": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-freebsd-x64/-/lightningcss-freebsd-x64-1.30.1.tgz",
+      "integrity": "sha512-kmW6UGCGg2PcyUE59K5r0kWfKPAVy4SltVeut+umLCFoJ53RdCUWxcRDzO1eTaxf/7Q2H7LTquFHPL5R+Gjyig==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "freebsd"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-linux-arm-gnueabihf": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-linux-arm-gnueabihf/-/lightningcss-linux-arm-gnueabihf-1.30.1.tgz",
+      "integrity": "sha512-MjxUShl1v8pit+6D/zSPq9S9dQ2NPFSQwGvxBCYaBYLPlCWuPh9/t1MRS8iUaR8i+a6w7aps+B4N0S1TYP/R+Q==",
+      "cpu": [
+        "arm"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-linux-arm64-gnu": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-linux-arm64-gnu/-/lightningcss-linux-arm64-gnu-1.30.1.tgz",
+      "integrity": "sha512-gB72maP8rmrKsnKYy8XUuXi/4OctJiuQjcuqWNlJQ6jZiWqtPvqFziskH3hnajfvKB27ynbVCucKSm2rkQp4Bw==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-linux-arm64-musl": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-linux-arm64-musl/-/lightningcss-linux-arm64-musl-1.30.1.tgz",
+      "integrity": "sha512-jmUQVx4331m6LIX+0wUhBbmMX7TCfjF5FoOH6SD1CttzuYlGNVpA7QnrmLxrsub43ClTINfGSYyHe2HWeLl5CQ==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-linux-x64-gnu": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-linux-x64-gnu/-/lightningcss-linux-x64-gnu-1.30.1.tgz",
+      "integrity": "sha512-piWx3z4wN8J8z3+O5kO74+yr6ze/dKmPnI7vLqfSqI8bccaTGY5xiSGVIJBDd5K5BHlvVLpUB3S2YCfelyJ1bw==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-linux-x64-musl": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-linux-x64-musl/-/lightningcss-linux-x64-musl-1.30.1.tgz",
+      "integrity": "sha512-rRomAK7eIkL+tHY0YPxbc5Dra2gXlI63HL+v1Pdi1a3sC+tJTcFrHX+E86sulgAXeI7rSzDYhPSeHHjqFhqfeQ==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "linux"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-win32-arm64-msvc": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-win32-arm64-msvc/-/lightningcss-win32-arm64-msvc-1.30.1.tgz",
+      "integrity": "sha512-mSL4rqPi4iXq5YVqzSsJgMVFENoa4nGTT/GjO2c0Yl9OuQfPsIfncvLrEW6RbbB24WtZ3xP/2CCmI3tNkNV4oA==",
+      "cpu": [
+        "arm64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/lightningcss-win32-x64-msvc": {
+      "version": "1.30.1",
+      "resolved": "https://registry.npmjs.org/lightningcss-win32-x64-msvc/-/lightningcss-win32-x64-msvc-1.30.1.tgz",
+      "integrity": "sha512-PVqXh48wh4T53F/1CCu8PIPCxLzWyCnn/9T5W1Jpmdy5h9Cwd+0YQS6/LwhHXSafuc61/xg9Lv5OrCby6a++jg==",
+      "cpu": [
+        "x64"
+      ],
+      "dev": true,
+      "license": "MPL-2.0",
+      "optional": true,
+      "os": [
+        "win32"
+      ],
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/parcel"
+      }
+    },
+    "node_modules/locate-path": {
+      "version": "5.0.0",
+      "resolved": "https://registry.npmjs.org/locate-path/-/locate-path-5.0.0.tgz",
+      "integrity": "sha512-t7hw9pI+WvuwNJXwk5zVHpyhIqzg2qTlklJOf0mVxGSbe3Fp2VieZcduNYjaLDoy6p9uGpQEGWG87WpMKlNq8g==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "p-locate": "^4.1.0"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/lucide-react": {
+      "version": "0.548.0",
+      "resolved": "https://registry.npmjs.org/lucide-react/-/lucide-react-0.548.0.tgz",
+      "integrity": "sha512-63b16z63jM9yc1MwxajHeuu0FRZFsDtljtDjYm26Kd86UQ5HQzu9ksEtoUUw4RBuewodw/tGFmvipePvRsKeDA==",
+      "license": "ISC",
+      "peerDependencies": {
+        "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0"
+      }
+    },
+    "node_modules/magic-string": {
+      "version": "0.30.19",
+      "resolved": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.19.tgz",
+      "integrity": "sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "@jridgewell/sourcemap-codec": "^1.5.5"
+      }
+    },
+    "node_modules/make-dir": {
+      "version": "3.1.0",
+      "resolved": "https://registry.npmjs.org/make-dir/-/make-dir-3.1.0.tgz",
+      "integrity": "sha512-g3FeP20LNwhALb/6Cz6Dd4F2ngze0jz7tbzrD2wAV+o9FeNHe4rL+yK2md0J/fiSf1sa1ADhXqi5+oVwOM/eGw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "semver": "^6.0.0"
+      },
+      "engines": {
+        "node": ">=8"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/make-dir/node_modules/semver": {
+      "version": "6.3.1",
+      "resolved": "https://registry.npmjs.org/semver/-/semver-6.3.1.tgz",
+      "integrity": "sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==",
+      "dev": true,
+      "license": "ISC",
+      "bin": {
+        "semver": "bin/semver.js"
+      }
+    },
+    "node_modules/merge2": {
+      "version": "1.4.1",
+      "resolved": "https://registry.npmjs.org/merge2/-/merge2-1.4.1.tgz",
+      "integrity": "sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 8"
+      }
+    },
+    "node_modules/micromatch": {
+      "version": "4.0.8",
+      "resolved": "https://registry.npmjs.org/micromatch/-/micromatch-4.0.8.tgz",
+      "integrity": "sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "braces": "^3.0.3",
+        "picomatch": "^2.3.1"
+      },
+      "engines": {
+        "node": ">=8.6"
+      }
+    },
+    "node_modules/minipass": {
+      "version": "7.1.2",
+      "resolved": "https://registry.npmjs.org/minipass/-/minipass-7.1.2.tgz",
+      "integrity": "sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==",
+      "dev": true,
+      "license": "ISC",
+      "engines": {
+        "node": ">=16 || 14 >=14.17"
+      }
+    },
+    "node_modules/minizlib": {
+      "version": "3.1.0",
+      "resolved": "https://registry.npmjs.org/minizlib/-/minizlib-3.1.0.tgz",
+      "integrity": "sha512-KZxYo1BUkWD2TVFLr0MQoM8vUUigWD3LlD83a/75BqC+4qE0Hb1Vo5v1FgcfaNXvfXzr+5EhQ6ing/CaBijTlw==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "minipass": "^7.1.2"
+      },
+      "engines": {
+        "node": ">= 18"
+      }
+    },
+    "node_modules/motion-dom": {
+      "version": "12.23.23",
+      "resolved": "https://registry.npmjs.org/motion-dom/-/motion-dom-12.23.23.tgz",
+      "integrity": "sha512-n5yolOs0TQQBRUFImrRfs/+6X4p3Q4n1dUEqt/H58Vx7OW6RF+foWEgmTVDhIWJIMXOuNNL0apKH2S16en9eiA==",
+      "license": "MIT",
+      "dependencies": {
+        "motion-utils": "^12.23.6"
+      }
+    },
+    "node_modules/motion-utils": {
+      "version": "12.23.6",
+      "resolved": "https://registry.npmjs.org/motion-utils/-/motion-utils-12.23.6.tgz",
+      "integrity": "sha512-eAWoPgr4eFEOFfg2WjIsMoqJTW6Z8MTUCgn/GZ3VRpClWBdnbjryiA3ZSNLyxCTmCQx4RmYX6jX1iWHbenUPNQ==",
+      "license": "MIT"
+    },
+    "node_modules/nanoid": {
+      "version": "3.3.11",
+      "resolved": "https://registry.npmjs.org/nanoid/-/nanoid-3.3.11.tgz",
+      "integrity": "sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==",
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "bin": {
+        "nanoid": "bin/nanoid.cjs"
+      },
+      "engines": {
+        "node": "^10 || ^12 || ^13.7 || ^14 || >=15.0.1"
+      }
+    },
+    "node_modules/next": {
+      "version": "15.5.18",
+      "resolved": "https://registry.npmjs.org/next/-/next-15.5.18.tgz",
+      "integrity": "sha512-eKL8zUJkX9Y5lE+RX/2YJoItVdGlIscyVyboeD9wSpp0PaGqjoA4tTpT2qPqz9ax+5IzGESyLSeZ/RCwbSZ2uQ==",
+      "license": "MIT",
+      "dependencies": {
+        "@next/env": "15.5.18",
+        "@swc/helpers": "0.5.15",
+        "caniuse-lite": "^1.0.30001579",
+        "postcss": "8.4.31",
+        "styled-jsx": "5.1.6"
+      },
+      "bin": {
+        "next": "dist/bin/next"
+      },
+      "engines": {
+        "node": "^18.18.0 || ^19.8.0 || >= 20.0.0"
+      },
+      "optionalDependencies": {
+        "@next/swc-darwin-arm64": "15.5.18",
+        "@next/swc-darwin-x64": "15.5.18",
+        "@next/swc-linux-arm64-gnu": "15.5.18",
+        "@next/swc-linux-arm64-musl": "15.5.18",
+        "@next/swc-linux-x64-gnu": "15.5.18",
+        "@next/swc-linux-x64-musl": "15.5.18",
+        "@next/swc-win32-arm64-msvc": "15.5.18",
+        "@next/swc-win32-x64-msvc": "15.5.18",
+        "sharp": "^0.34.3"
+      },
+      "peerDependencies": {
+        "@opentelemetry/api": "^1.1.0",
+        "@playwright/test": "^1.51.1",
+        "babel-plugin-react-compiler": "*",
+        "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+        "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+        "sass": "^1.3.0"
+      },
+      "peerDependenciesMeta": {
+        "@opentelemetry/api": {
+          "optional": true
+        },
+        "@playwright/test": {
+          "optional": true
+        },
+        "babel-plugin-react-compiler": {
+          "optional": true
+        },
+        "sass": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/next/node_modules/postcss": {
+      "version": "8.4.31",
+      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.4.31.tgz",
+      "integrity": "sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==",
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/postcss"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "nanoid": "^3.3.6",
+        "picocolors": "^1.0.0",
+        "source-map-js": "^1.0.2"
+      },
+      "engines": {
+        "node": "^10 || ^12 || >=14"
+      }
+    },
+    "node_modules/node-releases": {
+      "version": "2.0.23",
+      "resolved": "https://registry.npmjs.org/node-releases/-/node-releases-2.0.23.tgz",
+      "integrity": "sha512-cCmFDMSm26S6tQSDpBCg/NR8NENrVPhAJSf+XbxBG4rPFaaonlEoE9wHQmun+cls499TQGSb7ZyPBRlzgKfpeg==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/normalize-range": {
+      "version": "0.1.2",
+      "resolved": "https://registry.npmjs.org/normalize-range/-/normalize-range-0.1.2.tgz",
+      "integrity": "sha512-bdok/XvKII3nUpklnV6P2hxtMNrCboOjAcyBuQnWEhO665FwrSNRxU+AqpsyvO6LgGYPspN+lu5CLtw4jPRKNA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/p-limit": {
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/p-limit/-/p-limit-2.3.0.tgz",
+      "integrity": "sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "p-try": "^2.0.0"
+      },
+      "engines": {
+        "node": ">=6"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/sindresorhus"
+      }
+    },
+    "node_modules/p-locate": {
+      "version": "4.1.0",
+      "resolved": "https://registry.npmjs.org/p-locate/-/p-locate-4.1.0.tgz",
+      "integrity": "sha512-R79ZZ/0wAxKGu3oYMlz8jy/kbhsNrS7SKZ7PxEHBgJ5+F2mtFW2fK2cOtBh1cHYkQsbzFV7I+EoRKe6Yt0oK7A==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "p-limit": "^2.2.0"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/p-try": {
+      "version": "2.2.0",
+      "resolved": "https://registry.npmjs.org/p-try/-/p-try-2.2.0.tgz",
+      "integrity": "sha512-R4nPAVTAU0B9D35/Gk3uJf/7XYbQcyohSKdvAxIRSNghFl4e71hVoGnBNQz9cWaXxO2I10KTC+3jMdvvoKw6dQ==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=6"
+      }
+    },
+    "node_modules/path-exists": {
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/path-exists/-/path-exists-4.0.0.tgz",
+      "integrity": "sha512-ak9Qy5Q7jYb2Wwcey5Fpvg2KoAc/ZIhLSLOSBmRmygPsGwkVVt0fZa0qrtMz+m6tJTAHfZQ8FnmB4MG4LWy7/w==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/path-type": {
+      "version": "4.0.0",
+      "resolved": "https://registry.npmjs.org/path-type/-/path-type-4.0.0.tgz",
+      "integrity": "sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/picocolors": {
+      "version": "1.1.1",
+      "resolved": "https://registry.npmjs.org/picocolors/-/picocolors-1.1.1.tgz",
+      "integrity": "sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==",
+      "license": "ISC"
+    },
+    "node_modules/picomatch": {
+      "version": "2.3.2",
+      "resolved": "https://registry.npmjs.org/picomatch/-/picomatch-2.3.2.tgz",
+      "integrity": "sha512-V7+vQEJ06Z+c5tSye8S+nHUfI51xoXIXjHQ99cQtKUkQqqO1kO/KCJUfZXuB47h/YBlDhah2H3hdUGXn8ie0oA==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8.6"
+      },
+      "funding": {
+        "url": "https://github.com/sponsors/jonschlinkert"
+      }
+    },
+    "node_modules/pkg-dir": {
+      "version": "4.2.0",
+      "resolved": "https://registry.npmjs.org/pkg-dir/-/pkg-dir-4.2.0.tgz",
+      "integrity": "sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "find-up": "^4.0.0"
+      },
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/postcss": {
+      "version": "8.5.14",
+      "resolved": "https://registry.npmjs.org/postcss/-/postcss-8.5.14.tgz",
+      "integrity": "sha512-SoSL4+OSEtR99LHFZQiJLkT59C5B1amGO1NzTwj7TT1qCUgUO6hxOvzkOYxD+vMrXBM3XJIKzokoERdqQq/Zmg==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/postcss/"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/postcss"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "nanoid": "^3.3.11",
+        "picocolors": "^1.1.1",
+        "source-map-js": "^1.2.1"
+      },
+      "engines": {
+        "node": "^10 || ^12 || >=14"
+      }
+    },
+    "node_modules/postcss-value-parser": {
+      "version": "4.2.0",
+      "resolved": "https://registry.npmjs.org/postcss-value-parser/-/postcss-value-parser-4.2.0.tgz",
+      "integrity": "sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/queue-microtask": {
+      "version": "1.2.3",
+      "resolved": "https://registry.npmjs.org/queue-microtask/-/queue-microtask-1.2.3.tgz",
+      "integrity": "sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/feross"
+        },
+        {
+          "type": "patreon",
+          "url": "https://www.patreon.com/feross"
+        },
+        {
+          "type": "consulting",
+          "url": "https://feross.org/support"
+        }
+      ],
+      "license": "MIT"
+    },
+    "node_modules/react": {
+      "version": "19.1.0",
+      "resolved": "https://registry.npmjs.org/react/-/react-19.1.0.tgz",
+      "integrity": "sha512-FS+XFBNvn3GTAWq26joslQgWNoFu08F4kl0J4CgdNKADkdSGXQyTCnKteIAJy96Br6YbpEU1LSzV5dYtjMkMDg==",
+      "license": "MIT",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/react-dom": {
+      "version": "19.1.0",
+      "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.1.0.tgz",
+      "integrity": "sha512-Xs1hdnE+DyKgeHJeJznQmYMIBG3TKIHJJT95Q58nHLSrElKlGQqDTR2HQ9fx5CN/Gk6Vh/kupBTDLU11/nDk/g==",
+      "license": "MIT",
+      "dependencies": {
+        "scheduler": "^0.26.0"
+      },
+      "peerDependencies": {
+        "react": "^19.1.0"
+      }
+    },
+    "node_modules/reusify": {
+      "version": "1.1.0",
+      "resolved": "https://registry.npmjs.org/reusify/-/reusify-1.1.0.tgz",
+      "integrity": "sha512-g6QUff04oZpHs0eG5p83rFLhHeV00ug/Yf9nZM6fLeUrPguBTkTQOdpAWWspMh55TZfVQDPaN3NQJfbVRAxdIw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "iojs": ">=1.0.0",
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/run-parallel": {
+      "version": "1.2.0",
+      "resolved": "https://registry.npmjs.org/run-parallel/-/run-parallel-1.2.0.tgz",
+      "integrity": "sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/feross"
+        },
+        {
+          "type": "patreon",
+          "url": "https://www.patreon.com/feross"
+        },
+        {
+          "type": "consulting",
+          "url": "https://feross.org/support"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "queue-microtask": "^1.2.2"
+      }
+    },
+    "node_modules/scheduler": {
+      "version": "0.26.0",
+      "resolved": "https://registry.npmjs.org/scheduler/-/scheduler-0.26.0.tgz",
+      "integrity": "sha512-NlHwttCI/l5gCPR3D1nNXtWABUmBwvZpEQiD4IXSbIDq8BzLIK/7Ir5gTFSGZDUu37K5cMNp0hFtzO38sC7gWA==",
+      "license": "MIT"
+    },
+    "node_modules/semver": {
+      "version": "7.7.3",
+      "resolved": "https://registry.npmjs.org/semver/-/semver-7.7.3.tgz",
+      "integrity": "sha512-SdsKMrI9TdgjdweUSR9MweHA4EJ8YxHn8DFaDisvhVlUOe4BF1tLD7GAj0lIqWVl+dPb/rExr0Btby5loQm20Q==",
+      "license": "ISC",
+      "optional": true,
+      "bin": {
+        "semver": "bin/semver.js"
+      },
+      "engines": {
+        "node": ">=10"
+      }
+    },
+    "node_modules/sharp": {
+      "version": "0.34.4",
+      "resolved": "https://registry.npmjs.org/sharp/-/sharp-0.34.4.tgz",
+      "integrity": "sha512-FUH39xp3SBPnxWvd5iib1X8XY7J0K0X7d93sie9CJg2PO8/7gmg89Nve6OjItK53/MlAushNNxteBYfM6DEuoA==",
+      "hasInstallScript": true,
+      "license": "Apache-2.0",
+      "optional": true,
+      "dependencies": {
+        "@img/colour": "^1.0.0",
+        "detect-libc": "^2.1.0",
+        "semver": "^7.7.2"
+      },
+      "engines": {
+        "node": "^18.17.0 || ^20.3.0 || >=21.0.0"
+      },
+      "funding": {
+        "url": "https://opencollective.com/libvips"
+      },
+      "optionalDependencies": {
+        "@img/sharp-darwin-arm64": "0.34.4",
+        "@img/sharp-darwin-x64": "0.34.4",
+        "@img/sharp-libvips-darwin-arm64": "1.2.3",
+        "@img/sharp-libvips-darwin-x64": "1.2.3",
+        "@img/sharp-libvips-linux-arm": "1.2.3",
+        "@img/sharp-libvips-linux-arm64": "1.2.3",
+        "@img/sharp-libvips-linux-ppc64": "1.2.3",
+        "@img/sharp-libvips-linux-s390x": "1.2.3",
+        "@img/sharp-libvips-linux-x64": "1.2.3",
+        "@img/sharp-libvips-linuxmusl-arm64": "1.2.3",
+        "@img/sharp-libvips-linuxmusl-x64": "1.2.3",
+        "@img/sharp-linux-arm": "0.34.4",
+        "@img/sharp-linux-arm64": "0.34.4",
+        "@img/sharp-linux-ppc64": "0.34.4",
+        "@img/sharp-linux-s390x": "0.34.4",
+        "@img/sharp-linux-x64": "0.34.4",
+        "@img/sharp-linuxmusl-arm64": "0.34.4",
+        "@img/sharp-linuxmusl-x64": "0.34.4",
+        "@img/sharp-wasm32": "0.34.4",
+        "@img/sharp-win32-arm64": "0.34.4",
+        "@img/sharp-win32-ia32": "0.34.4",
+        "@img/sharp-win32-x64": "0.34.4"
+      }
+    },
+    "node_modules/slash": {
+      "version": "3.0.0",
+      "resolved": "https://registry.npmjs.org/slash/-/slash-3.0.0.tgz",
+      "integrity": "sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=8"
+      }
+    },
+    "node_modules/source-map-js": {
+      "version": "1.2.1",
+      "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+      "integrity": "sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==",
+      "license": "BSD-3-Clause",
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/strip-outer": {
+      "version": "1.0.1",
+      "resolved": "https://registry.npmjs.org/strip-outer/-/strip-outer-1.0.1.tgz",
+      "integrity": "sha512-k55yxKHwaXnpYGsOzg4Vl8+tDrWylxDEpknGjhTiZB8dFRU5rTo9CAzeycivxV3s+zlTKwrs6WxMxR95n26kwg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "escape-string-regexp": "^1.0.2"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/styled-jsx": {
+      "version": "5.1.6",
+      "resolved": "https://registry.npmjs.org/styled-jsx/-/styled-jsx-5.1.6.tgz",
+      "integrity": "sha512-qSVyDTeMotdvQYoHWLNGwRFJHC+i+ZvdBRYosOFgC+Wg1vx4frN2/RG/NA7SYqqvKNLf39P2LSRA2pu6n0XYZA==",
+      "license": "MIT",
+      "dependencies": {
+        "client-only": "0.0.1"
+      },
+      "engines": {
+        "node": ">= 12.0.0"
+      },
+      "peerDependencies": {
+        "react": ">= 16.8.0 || 17.x.x || ^18.0.0-0 || ^19.0.0-0"
+      },
+      "peerDependenciesMeta": {
+        "@babel/core": {
+          "optional": true
+        },
+        "babel-plugin-macros": {
+          "optional": true
+        }
+      }
+    },
+    "node_modules/tailwindcss": {
+      "version": "4.1.14",
+      "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.1.14.tgz",
+      "integrity": "sha512-b7pCxjGO98LnxVkKjaZSDeNuljC4ueKUddjENJOADtubtdo8llTaJy7HwBMeLNSSo2N5QIAgklslK1+Ir8r6CA==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/tapable": {
+      "version": "2.3.0",
+      "resolved": "https://registry.npmjs.org/tapable/-/tapable-2.3.0.tgz",
+      "integrity": "sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">=6"
+      },
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/webpack"
+      }
+    },
+    "node_modules/tar": {
+      "version": "7.5.15",
+      "resolved": "https://registry.npmjs.org/tar/-/tar-7.5.15.tgz",
+      "integrity": "sha512-dzGK0boVlC4W5QFuQN1EFSl3bIDYsk7Tj40U6eIBnK2k/8ml7TZ5agbI5j5+qnoVcAA+rNtBml8SEiLxZpNqRQ==",
+      "dev": true,
+      "license": "BlueOak-1.0.0",
+      "dependencies": {
+        "@isaacs/fs-minipass": "^4.0.0",
+        "chownr": "^3.0.0",
+        "minipass": "^7.1.2",
+        "minizlib": "^3.1.0",
+        "yallist": "^5.0.0"
+      },
+      "engines": {
+        "node": ">=18"
+      }
+    },
+    "node_modules/to-regex-range": {
+      "version": "5.0.1",
+      "resolved": "https://registry.npmjs.org/to-regex-range/-/to-regex-range-5.0.1.tgz",
+      "integrity": "sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "is-number": "^7.0.0"
+      },
+      "engines": {
+        "node": ">=8.0"
+      }
+    },
+    "node_modules/trim-repeated": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/trim-repeated/-/trim-repeated-1.0.0.tgz",
+      "integrity": "sha512-pkonvlKk8/ZuR0D5tLW8ljt5I8kmxp2XKymhepUeOdCEfKpZaktSArkLHZt76OB1ZvO9bssUsDty4SWhLvZpLg==",
+      "dev": true,
+      "license": "MIT",
+      "dependencies": {
+        "escape-string-regexp": "^1.0.2"
+      },
+      "engines": {
+        "node": ">=0.10.0"
+      }
+    },
+    "node_modules/tslib": {
+      "version": "2.8.1",
+      "resolved": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz",
+      "integrity": "sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==",
+      "license": "0BSD"
+    },
+    "node_modules/typescript": {
+      "version": "5.9.3",
+      "resolved": "https://registry.npmjs.org/typescript/-/typescript-5.9.3.tgz",
+      "integrity": "sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==",
+      "dev": true,
+      "license": "Apache-2.0",
+      "bin": {
+        "tsc": "bin/tsc",
+        "tsserver": "bin/tsserver"
+      },
+      "engines": {
+        "node": ">=14.17"
+      }
+    },
+    "node_modules/undici-types": {
+      "version": "6.21.0",
+      "resolved": "https://registry.npmjs.org/undici-types/-/undici-types-6.21.0.tgz",
+      "integrity": "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==",
+      "dev": true,
+      "license": "MIT"
+    },
+    "node_modules/universalify": {
+      "version": "2.0.1",
+      "resolved": "https://registry.npmjs.org/universalify/-/universalify-2.0.1.tgz",
+      "integrity": "sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==",
+      "dev": true,
+      "license": "MIT",
+      "engines": {
+        "node": ">= 10.0.0"
+      }
+    },
+    "node_modules/update-browserslist-db": {
+      "version": "1.1.3",
+      "resolved": "https://registry.npmjs.org/update-browserslist-db/-/update-browserslist-db-1.1.3.tgz",
+      "integrity": "sha512-UxhIZQ+QInVdunkDAaiazvvT/+fXL5Osr0JZlJulepYu6Jd7qJtDZjlur0emRlT71EN3ScPoE7gvsuIKKNavKw==",
+      "dev": true,
+      "funding": [
+        {
+          "type": "opencollective",
+          "url": "https://opencollective.com/browserslist"
+        },
+        {
+          "type": "tidelift",
+          "url": "https://tidelift.com/funding/github/npm/browserslist"
+        },
+        {
+          "type": "github",
+          "url": "https://github.com/sponsors/ai"
+        }
+      ],
+      "license": "MIT",
+      "dependencies": {
+        "escalade": "^3.2.0",
+        "picocolors": "^1.1.1"
+      },
+      "bin": {
+        "update-browserslist-db": "cli.js"
+      },
+      "peerDependencies": {
+        "browserslist": ">= 4.21.0"
+      }
+    },
+    "node_modules/yallist": {
+      "version": "5.0.0",
+      "resolved": "https://registry.npmjs.org/yallist/-/yallist-5.0.0.tgz",
+      "integrity": "sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==",
+      "dev": true,
+      "license": "BlueOak-1.0.0",
+      "engines": {
+        "node": ">=18"
+      }
+    }
+  }
+}
+
+<<FILE_END: ./package-lock.json>>
+
+<<FILE_START: ./package.json>>
+{
+  "name": "meu-portfolio",
+  "version": "0.1.0",
+  "private": true,
+
+  "homepage": "https://fatec-sjc-dsm-portfolio.github.io/ra1461392321024",
+
+"scripts": {
+  "dev": "next dev --turbopack",
+  "build": "next build",
+  "start": "next start",
+  "predeploy": "npm run build",
+  "deploy": "node -e \"fs.writeFileSync('out/.nojekyll', '')\" && gh-pages -d out"
+},
+
+  "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "framer-motion": "^12.23.24",
+    "lucide-react": "^0.548.0",
+    "next": "^15.5.18",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.21",
+    "gh-pages": "^6.3.0",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14",
+    "typescript": "^5"
+  }
+}
+<<FILE_END: ./package.json>>
+
+<<FILE_START: ./postcss.config.mjs>>
+const config = {
+  plugins: ["@tailwindcss/postcss"],
+};
+
+export default config;
+
+<<FILE_END: ./postcss.config.mjs>>
+
+<<FILE_START: ./README.md>>
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+<<FILE_END: ./README.md>>
+
+<<FILE_START: ./tsconfig.json>>
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
+
+<<FILE_END: ./tsconfig.json>>
