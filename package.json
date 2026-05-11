@@ -10,7 +10,7 @@
   "build": "next build",
   "start": "next start",
   "predeploy": "npm run build",
-  "deploy": "touch out/.nojekyll && gh-pages -d out -t true"
+  "deploy": "node -e \"fs.writeFileSync('out/.nojekyll', '')\" && gh-pages -d out"
 },
 
   "dependencies": {
