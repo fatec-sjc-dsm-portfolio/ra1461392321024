@@ -5,12 +5,12 @@
 
   "homepage": "https://fatec-sjc-dsm-portfolio.github.io/ra1461392321024",
 
-  "scripts": {
+"scripts": {
   "dev": "next dev --turbopack",
   "build": "next build",
   "start": "next start",
   "predeploy": "npm run build",
-  "deploy": "gh-pages -d out"
+  "deploy": "touch out/.nojekyll && gh-pages -d out -t true"
 },
 
   "dependencies": {

@@ -2,28 +2,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #FEFAE0; /* Fundo fixo do site */
-  --foreground: #1B2D0E; /* Cor da navbar e textos em geral */
-  --font-title: 'Share Tech Mono', monospace; /* Fonte para títulos, navbar e terminal */
-  --font-text: 'Zain', sans-serif; /* Fonte para parágrafos e textos menores */
+  --background: #FEFAE0; 
+  --foreground: #1B2D0E; 
+  --font-title: 'Share Tech Mono', monospace; 
+  --font-text: 'Zain', sans-serif; 
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-text); /* Zain para textos gerais */
-  --font-mono: var(--font-title); /* Share Tech Mono para terminal */
+  --font-sans: var(--font-text); 
+  --font-mono: var(--font-title); 
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-text); /* Zain como padrão para o body */
+  font-family: var(--font-text); 
   margin: 0 70px; 
   min-height: 100vh;
 }
 
-/* Classes para fontes manuais */
+
 .zain {
   font-family: var(--font-text);
 }
