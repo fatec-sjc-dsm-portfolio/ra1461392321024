@@ -24,7 +24,7 @@ const BlocoAnotacoes: React.FC<BlocoAnotacoesProps> = ({ projetos }) => {
               rel="noopener noreferrer"
             >
               <img
-                src="/LINKSEXTERNOS.svg"
+                src="LINKSEXTERNOS.svg"
                 alt="Link Externo"
                 className="bloco-icon"
               />

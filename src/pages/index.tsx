@@ -151,7 +151,7 @@ const Home: React.FC = () => {
                 <div className="photo-radar-corner radar-bottom-right"></div>
 
                 {/* Foto */}
-                <img src="/eu.jpeg" alt="Eber" className="home-photo" />
+                <img src="eu.jpeg" alt="Eber" className="home-photo" />
                 
                 {/* Cantos decorativos */}
                 <div className="photo-corners photo-corner-bl"></div>
@@ -196,14 +196,14 @@ const Home: React.FC = () => {
               portfólio faça sentido pra você tanto quanto faz pra mim.
             </p>
             <img
-              src="/bolinhas.png"
+              src="bolinhas.png"
               alt="Decoração bolinhas"
               className="sobre-bolinhas"
             />
           </div>
 
           <div className="sobre-photo-container">
-            <img src="/hirono.png" alt="Eber" className="sobre-photo section--hidden" />
+            <img src="hirono.png" alt="Eber" className="sobre-photo section--hidden" />
             <p className="tech sobre-photo-text section--hidden">Esse sou eu, btw! :p</p>
             <BlocoNotas />
           </div>
@@ -241,7 +241,7 @@ const Home: React.FC = () => {
                 A comunicação, de forma geral, sempre teve grande importância para mim. Acredito que saber transmitir e receber ideias de maneira clara e eficaz é essencial para que elas sejam compreendidas e gerem resultados. Por isso, busco constantemente aprimorar minhas habilidades comunicativas, fortalecendo minha capacidade de conexão com as pessoas.
               </p>
               <img
-              src="/triangulos.svg"
+              src="triangulos.svg"
               alt="Decoração triangulos"
               className="projetos-triangulos"
             />

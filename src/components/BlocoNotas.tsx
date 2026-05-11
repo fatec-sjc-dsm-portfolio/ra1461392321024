@@ -25,7 +25,7 @@ const BlocoNotas: React.FC = () => {
             className="bloco-item"
           >
             <img
-              src="/LINKSEXTERNOS.svg"
+              src="LINKSEXTERNOS.svg"
               alt="Spotify Icon"
               className="bloco-icon"
             />
@@ -37,7 +37,7 @@ const BlocoNotas: React.FC = () => {
             className="bloco-item"
           >
             <img
-              src="/LINKSEXTERNOS.svg"
+              src="LINKSEXTERNOS.svg"
               alt="Icon"
               className="bloco-icon"
             />
@@ -49,7 +49,7 @@ const BlocoNotas: React.FC = () => {
             className="bloco-item"
           >
             <img
-              src="/LINKSEXTERNOS.svg"
+              src="LINKSEXTERNOS.svg"
               alt="Icon"
               className="bloco-icon"
             />
