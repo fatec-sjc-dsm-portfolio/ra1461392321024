@@ -7,8 +7,8 @@ const Terminal: React.FC = () => {
   type HistoryItem = { kind: 'input' | 'response' | 'static'; text: string };
 
   const [history, setHistory] = useState<HistoryItem[]>([
-    { kind: 'static', text: 'Programando desde 2022...' },
-    { kind: 'static', text: 'Com carinho e dedicação :)' },
+    { kind: 'static', text: 'Coding since 2022' },
+    { kind: 'static', text: 'Welcome to my portfolio!' },
   ]);
 
   const [hasResponded, setHasResponded] = useState(false);
@@ -22,42 +22,44 @@ const Terminal: React.FC = () => {
   }, []);
 
   const commandResponses: { [key: string]: string } = {
-    'oi': 'Oie! Tudo bem sim e você??',
-    'oii': 'Oie! Tudo bem sim e você??',
-    'ola': 'Oie! Tudo bem sim e você??',
-    'olá': 'Oie! Tudo bem sim e você??',
-    'tudo bem': 'Oie! Tudo ótimo e contigo??',
-    'que legal': 'Obrigadooo :))',
-    'muito bom': 'Obrigadooo :)) q bom que achou!',
-    'gostei': 'Que bom!',
-    'show': 'Opa, vlw ae man!',
-    'legal': 'Obrigado pelo carinho :))',
-    'massa': 'Muito, né?',
-    'top': 'hihi :3',
-    'amei': 'Awww, obrigadooo <3',
-    'amo': 'Eh noiss',
-    'amoo': 'Amamos horrores!',
-    'ameii': 'Thx babe :)',
-    'bonito': 'Origadoo :))',
-    'arrasou': 'Obrigadooo :))))',
-    'divou': 'Nois ama!!',
-    'diva': 'Você mds!!',
-    'divo': 'Você mds!!',
-    'veyr': '// AMO MO !',
-    'vey': 'Oy vey',
-    'hey hey hey': 'Hey hey hey veyr',
-    'feio': '>:',
-    'bosta': '>:',
-    'lixo': '>:',
-    'horror': '>:',
-    'péssimo': '>:',
-    'pessimo': '>:',
-    'ruim': '>:',
-    'odeio': '>:',
+    'oi': 'hey sister',
+    'oii': 'walk for me.',
+    'ola': 'the icon.',
+    'olá': 'face.',
+    'tudo bem': 'im literally 45 years old',
+    'que legal': 'ate.',
+    'muito bom': 'left no crumbs.',
+    'gostei': 'you have taste.',
+    'show': 'i guess',
+    'legal': 'thx ho',
+    'massa': 'low frequency energy',
+    'top': 'the girls are girling',
+    'amei': 'obsessed.',
+    'amo': 'correct.',
+    'amoo': 'we are the moment',
+    'ameii': 'stunning.',
+    'bonito': 'stop looking at me',
+    'arrasou': 'an absolute vision',
+    'divou': 'the blueprint.',
+    'diva': 'estrogen.',
+    'divo': 'wait...',
+    'veyr': 'STFU and look at the material.',
+    'vey': 'dont call me that',
+    'hey hey hey': 'look at the material',
+    'feio': 'jail.',
+    'bosta': 'security.',
+    'lixo': 'fast fashion behavior',
+    'horror': 'immediately no.',
+    'péssimo': 'commercial failure.',
+    'pessimo': 'delete it.',
+    'ruim': 'go back to gap',
+    'odeio': 'you dont get the vision',
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    // Se já respondeu uma vez, acabou o show.
     if (hasResponded) return;
+
     if (e.key === 'Enter') {
       const command = inputValue.trim();
       if (!command) return;
@@ -74,19 +76,20 @@ const Terminal: React.FC = () => {
         }
       }
 
-      const badWords = [
-        'bosta', 'lixo', 'horror', 'péssimo', 'pessimo',
-        'ruim', 'merda', 'idiota', 'feio', 'odeio', 'lixão', 'lixao'
-      ];
+      const badWords = ['bosta', 'lixo', 'horror', 'péssimo', 'pessimo', 'ruim', 'merda', 'idiota', 'feio', 'odeio'];
+      
       if (!response && badWords.some(w => lc.includes(w))) {
-        response = '>:';
+        response = 'get a job. stay away from me.';
       }
 
-      if (!response) response = 'Não entendi :(';
+      if (!response) {
+        response = 'anyway...';
+      }
 
       setHistory(prev => [...prev, { kind: 'response', text: response! }]);
-      setHasResponded(true);
+      setHasResponded(true); // Trava futuras interações
       setInputValue('');
+
     } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
       setInputValue(prev => prev + e.key);
     } else if (e.key === 'Backspace') {
@@ -102,6 +105,7 @@ const Terminal: React.FC = () => {
       onKeyDown={handleKeyDown}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
+      style={{ outline: 'none' }}
     >
       <div className="terminal-shadow"></div>
       <div className="terminal-body tech">
@@ -127,7 +131,7 @@ const Terminal: React.FC = () => {
               return (
                 <div key={index} className="terminal-line tech response-line">
                   <span>C:\Users\Eber&gt;&nbsp;</span>
-                  <TypingText text={item.text} speed={40} />
+                  <TypingText text={item.text} speed={30} />
                 </div>
               );
             }
@@ -135,6 +139,7 @@ const Terminal: React.FC = () => {
             return null;
           })}
 
+          {/* O input só aparece se ainda não houve resposta */}
           {!hasResponded && (
             <div className="terminal-input-line tech">
               <span>C:\Users\Eber&gt; </span>
