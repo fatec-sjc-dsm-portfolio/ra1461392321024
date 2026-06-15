@@ -69,13 +69,13 @@
   position: absolute;
   top: 0.7rem;
   right: 0.7rem;
-  z-index: 2;
+  z-index: 5;
   width: 34px;
   height: 34px;
-  border: 1px solid rgba(64, 93, 45, 0.25);
+  border: 1px solid rgba(64, 93, 45, 0.45);
   border-radius: 999px;
-  background: rgba(253, 251, 240, 0.92);
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.16);
+  background: rgba(253, 251, 240, 0.96);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.22);
   cursor: pointer;
   display: flex;
   align-items: center;

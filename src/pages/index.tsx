@@ -266,9 +266,24 @@ const Home: React.FC = () => {
                 titulo: "API FATEC - 3º Semestre 2024",
                 imagem: "fapg.png",
                 link: "https://github.com/A-Sync-Fatec/api-fatec-3sem-24",
-                categoria: "API FATEC SJC"
+                categoria: "API FATEC SJC",
+                contribuicoes: [
+                  "Contribuí no desenvolvimento front-end da aplicação, criando telas e componentes para os fluxos principais.",
+                  "Apoiei a construção da experiência do usuário, organizando navegação, layout e hierarquia das informações.",
+                  "Participei dos ajustes visuais e de responsividade para deixar a interface mais clara e consistente."
+                ]
               },
-              { titulo: "Echo App - Personal Finance Tracker", imagem: "echo.jpeg", link: "https://github.com/eberssj/Echo-Mobile", categoria: "Projeto pessoal" },
+              {
+                titulo: "Echo App - Personal Finance Tracker",
+                imagem: "echo.jpeg",
+                link: "https://github.com/eberssj/Echo-Mobile",
+                categoria: "Projeto pessoal",
+                contribuicoes: [
+                  "Criei a proposta visual e a experiência do aplicativo, pensando em uma navegação simples para controle financeiro pessoal.",
+                  "Desenvolvi telas e componentes mobile para cadastro, acompanhamento e organização de receitas e despesas.",
+                  "Estruturei fluxos de uso voltados à clareza das informações financeiras e à facilidade de acompanhamento pelo usuário."
+                ]
+              },
               {
                 titulo: "Site de conscientização sobre Nefrologia Pediátrica",
                 imagem: "criancarenal.png",
