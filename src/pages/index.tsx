@@ -251,6 +251,23 @@ const Home: React.FC = () => {
                   "Contribuí com prototipação, refinamento de layout e alinhamento da interface com as necessidades do cliente."
                 ]
               },
+              {
+                titulo: "VISIONA - Sistema para Análises Ambientais",
+                imagem: "visiona.png",
+                link: "https://github.com/Code-Nine-FTC/API-2026.1",
+                categoria: "API FATEC SJC",
+                contribuicoes: [
+                  "Desenvolvi todo o design UX do sistema, estruturando fluxos, hierarquia visual e experiência de navegação.",
+                  "Implementei o front-end das principais telas, incluindo componentes para chatbot e dashboard.",
+                  "Construí a lógica de interação do chatbot e organizei visualizações do dashboard para apoiar análises ASG."
+                ]
+              },
+              {
+                titulo: "API FATEC - 3º Semestre 2024",
+                imagem: "fapg.png",
+                link: "https://github.com/A-Sync-Fatec/api-fatec-3sem-24",
+                categoria: "API FATEC SJC"
+              },
               { titulo: "Echo App - Personal Finance Tracker", imagem: "echo.jpeg", link: "https://github.com/eberssj/Echo-Mobile", categoria: "Projeto pessoal" },
               {
                 titulo: "Site de conscientização sobre Nefrologia Pediátrica",

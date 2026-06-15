@@ -1,0 +1,17 @@
+
+> meu-portfolio@0.1.0 dev
+> next dev --turbopack --hostname 127.0.0.1 --port 3002
+
+   ▲ Next.js 15.5.18 (Turbopack)
+   - Local:        http://127.0.0.1:3002
+   - Network:      http://127.0.0.1:3002
+
+ ✓ Starting...
+Creating turbopack project {
+  dir: 'D:\\fatec\\laboratorio de linguagem\\port\\ra1461392321024',
+  testMode: true
+}
+ ✓ Ready in 3.4s
+ ○ Compiling / ...
+ ✓ Compiled / in 5.9s
+ GET / 200 in 6590ms

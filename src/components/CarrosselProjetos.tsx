@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import "../styles/CarrosselProjetos.css";
 import { assetPath } from "../utils/assetPath";
@@ -27,8 +27,17 @@ const CarrosselProjetos: React.FC<CarrosselProjetosProps> = ({
   const total = projetos.length;
   if (total === 0) return null;
 
-  const extended = [projetos[total - 1], ...projetos, projetos[0]];
-  const [index, setIndex] = useState(1);
+  const cloneCount = Math.min(visibleCount, total);
+  const startIndex = cloneCount;
+  const extended = useMemo(
+    () => [
+      ...projetos.slice(total - cloneCount),
+      ...projetos,
+      ...projetos.slice(0, cloneCount),
+    ],
+    [projetos, total, cloneCount]
+  );
+  const [index, setIndex] = useState(startIndex);
   const [isAnimating, setIsAnimating] = useState(false);
   const [projetoSelecionado, setProjetoSelecionado] = useState<Projeto | null>(null);
   const trackRef = useRef<HTMLDivElement>(null);
@@ -55,18 +64,19 @@ const CarrosselProjetos: React.FC<CarrosselProjetosProps> = ({
     track.style.transform = `translateX(${-index * itemWidth}px)`;
 
     const onTransitionEnd = () => {
-      if (index === total + 1) {
+      if (index >= total + cloneCount) {
         track.style.transition = "none";
-        track.style.transform = `translateX(${-1 * itemWidth}px)`;
+        track.style.transform = `translateX(${-startIndex * itemWidth}px)`;
         requestAnimationFrame(() => {
-          setIndex(1);
+          setIndex(startIndex);
           setIsAnimating(false);
         });
-      } else if (index === 0) {
+      } else if (index < cloneCount) {
+        const resetIndex = total + index;
         track.style.transition = "none";
-        track.style.transform = `translateX(${-total * itemWidth}px)`;
+        track.style.transform = `translateX(${-resetIndex * itemWidth}px)`;
         requestAnimationFrame(() => {
-          setIndex(total);
+          setIndex(resetIndex);
           setIsAnimating(false);
         });
       } else {
@@ -76,7 +86,7 @@ const CarrosselProjetos: React.FC<CarrosselProjetosProps> = ({
 
     track.addEventListener("transitionend", onTransitionEnd);
     return () => track.removeEventListener("transitionend", onTransitionEnd);
-  }, [index, total, itemWidth]);
+  }, [index, total, itemWidth, cloneCount, startIndex]);
 
   useEffect(() => {
     const track = trackRef.current;
@@ -84,12 +94,12 @@ const CarrosselProjetos: React.FC<CarrosselProjetosProps> = ({
 
     requestAnimationFrame(() => {
       track.style.transition = "none";
-      track.style.transform = `translateX(${-1 * itemWidth}px)`;
+      track.style.transform = `translateX(${-startIndex * itemWidth}px)`;
       requestAnimationFrame(() => {
         track.style.transition = "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)";
       });
     });
-  }, [itemWidth]);
+  }, [itemWidth, startIndex]);
 
   useEffect(() => {
     projetos.forEach((projeto) => {
