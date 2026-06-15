@@ -94,15 +94,15 @@
 }
 
 .rede-card.instagram::before {
-  background-image: url('/instagram.svg');
+  background-image: url('/ra1461392321024/instagram.svg');
 }
 
 .rede-card.github::before {
-  background-image: url('/github.svg');
+  background-image: url('/ra1461392321024/github.svg');
 }
 
 .rede-card.linkedin::before {
-  background-image: url('/linkedin.svg');
+  background-image: url('/ra1461392321024/linkedin.svg');
 }
 
 
@@ -111,7 +111,7 @@
   width: 16px;
   height: 16px;
   display: inline-block;
-  background-image: url('/LINKSEXTERNOS.svg');
+  background-image: url('/ra1461392321024/LINKSEXTERNOS.svg');
   background-size: contain;
   background-repeat: no-repeat;
   position: absolute;

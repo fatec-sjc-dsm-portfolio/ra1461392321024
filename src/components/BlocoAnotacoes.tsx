@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/BlocoAnotacoes.css";
+import { assetPath } from "../utils/assetPath";
 
 interface ProjetoSecundario {
   titulo: string;
@@ -24,7 +25,7 @@ const BlocoAnotacoes: React.FC<BlocoAnotacoesProps> = ({ projetos }) => {
               rel="noopener noreferrer"
             >
               <img
-                src="LINKSEXTERNOS.svg"
+                src={assetPath("LINKSEXTERNOS.svg")}
                 alt="Link Externo"
                 className="bloco-icon"
               />

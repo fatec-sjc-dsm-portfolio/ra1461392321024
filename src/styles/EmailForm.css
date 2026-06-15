@@ -74,6 +74,15 @@
   cursor: not-allowed;
 }
 
+.emailform-status {
+  color: #405D2D;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  margin: 0.2rem 0 0;
+  text-align: center;
+  word-break: break-word;
+}
+
 /* Section */
 .contato-section {
   min-height: 80vh;

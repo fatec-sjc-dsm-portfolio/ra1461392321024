@@ -5,6 +5,7 @@ import BlocoNotas from '../components/BlocoNotas';
 import BlocoAnotacoes from '../components/BlocoAnotacoes';
 import CarrosselProjetos from '../components/CarrosselProjetos';
 import EmailForm from '../components/EmailForm';
+import { assetPath } from '../utils/assetPath';
 import '../styles/Contato.css';
 import '../styles/Projetos.css';
 import '../styles/Home.css';
@@ -151,7 +152,7 @@ const Home: React.FC = () => {
                 <div className="photo-radar-corner radar-bottom-right"></div>
 
                 {/* Foto */}
-                <img src="eu.jpeg" alt="Eber" className="home-photo" />
+                <img src={assetPath("eu.jpeg")} alt="Eber" className="home-photo" />
                 
                 {/* Cantos decorativos */}
                 <div className="photo-corners photo-corner-bl"></div>
@@ -196,14 +197,14 @@ const Home: React.FC = () => {
               portfólio faça sentido pra você tanto quanto faz pra mim.
             </p>
             <img
-              src="bolinhas.png"
+              src={assetPath("bolinhas.png")}
               alt="Decoração bolinhas"
               className="sobre-bolinhas"
             />
           </div>
 
           <div className="sobre-photo-container">
-            <img src="hirono.png" alt="Eber" className="sobre-photo section--hidden" />
+            <img src={assetPath("hirono.png")} alt="Eber" className="sobre-photo section--hidden" />
             <p className="tech sobre-photo-text section--hidden">Esse sou eu, btw! :p</p>
             <BlocoNotas />
           </div>
@@ -217,11 +218,51 @@ const Home: React.FC = () => {
         <div className="projetos-container">
           <CarrosselProjetos
             projetos={[
-              { titulo: "Site de Gestão de Chamadas de Serviços", imagem: "woodpacker.png", link: "https://github.com/TeamHiveAPI/API-2024.01/tree/main" },
-              { titulo: "Sistema IoT de monitoramento meteorológico", imagem: "tecsus.png", link: "https://github.com/TeamHiveAPI/API-2025.01" },
-              { titulo: " Aplicação de Almoxarifado Para as Forças Armadas", imagem: "almox.jpeg", link: "https://github.com/TeamHiveAPI/API-2025.02" },
-              { titulo: "Echo App - Personal Finance Tracker", imagem: "echo.jpeg", link: "https://github.com/eberssj/Echo-Mobile" },
-              { titulo: "Site de conscientização sobre Nefrologia Pediátrica", imagem: "criancarenal.png", link: "https://github.com/TeamHiveAPI/API-2023.2?tab=readme-ov-file" }
+              {
+                titulo: "Site de Gestão de Chamadas de Serviços",
+                imagem: "woodpacker.png",
+                link: "https://github.com/TeamHiveAPI/API-2024.01/tree/main",
+                categoria: "API FATEC SJC",
+                contribuicoes: [
+                  "Construí telas e componentes front-end para cadastro, acompanhamento e visualização dos chamados.",
+                  "Ajudei a definir a identidade visual da interface, organizando cores, hierarquia e padrões de navegação.",
+                  "Participei da integração das telas com os fluxos do sistema e dos ajustes finais de responsividade."
+                ]
+              },
+              {
+                titulo: "Sistema IoT de monitoramento meteorológico",
+                imagem: "tecsus.png",
+                link: "https://github.com/TeamHiveAPI/API-2025.01",
+                categoria: "API FATEC SJC",
+                contribuicoes: [
+                  "Desenvolvi visualizações front-end para leitura e interpretação dos dados meteorológicos.",
+                  "Colaborei no design dos dashboards, priorizando clareza para gráficos, indicadores e alertas.",
+                  "Apoiei a validação da experiência do usuário em diferentes resoluções e cenários de uso."
+                ]
+              },
+              {
+                titulo: "Aplicação de Almoxarifado Para as Forças Armadas",
+                imagem: "almox.jpeg",
+                link: "https://github.com/TeamHiveAPI/API-2025.02",
+                categoria: "API FATEC SJC",
+                contribuicoes: [
+                  "Atuei na criação das telas de consulta, controle e movimentação de itens do almoxarifado.",
+                  "Organizei elementos visuais para facilitar leitura rápida de status, quantidades e informações operacionais.",
+                  "Contribuí com prototipação, refinamento de layout e alinhamento da interface com as necessidades do cliente."
+                ]
+              },
+              { titulo: "Echo App - Personal Finance Tracker", imagem: "echo.jpeg", link: "https://github.com/eberssj/Echo-Mobile", categoria: "Projeto pessoal" },
+              {
+                titulo: "Site de conscientização sobre Nefrologia Pediátrica",
+                imagem: "criancarenal.png",
+                link: "https://github.com/TeamHiveAPI/API-2023.2?tab=readme-ov-file",
+                categoria: "API FATEC SJC",
+                contribuicoes: [
+                  "Criei e ajustei seções da interface para apresentar informações de saúde de forma acolhedora e objetiva.",
+                  "Trabalhei na composição visual do site, equilibrando acessibilidade, cores e organização do conteúdo.",
+                  "Ajudei nos testes de navegação e nos refinamentos de layout para melhorar a experiência do público."
+                ]
+              }
             ]}
           />
         </div>
@@ -241,7 +282,7 @@ const Home: React.FC = () => {
                 A comunicação, de forma geral, sempre teve grande importância para mim. Acredito que saber transmitir e receber ideias de maneira clara e eficaz é essencial para que elas sejam compreendidas e gerem resultados. Por isso, busco constantemente aprimorar minhas habilidades comunicativas, fortalecendo minha capacidade de conexão com as pessoas.
               </p>
               <img
-              src="triangulos.svg"
+              src={assetPath("triangulos.svg")}
               alt="Decoração triangulos"
               className="projetos-triangulos"
             />

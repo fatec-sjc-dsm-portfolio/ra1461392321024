@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/BlocoNotas.css";
+import { assetPath } from "../utils/assetPath";
 
 const BlocoNotas: React.FC = () => {
   return (
@@ -25,7 +26,7 @@ const BlocoNotas: React.FC = () => {
             className="bloco-item"
           >
             <img
-              src="LINKSEXTERNOS.svg"
+              src={assetPath("LINKSEXTERNOS.svg")}
               alt="Spotify Icon"
               className="bloco-icon"
             />
@@ -37,7 +38,7 @@ const BlocoNotas: React.FC = () => {
             className="bloco-item"
           >
             <img
-              src="LINKSEXTERNOS.svg"
+              src={assetPath("LINKSEXTERNOS.svg")}
               alt="Icon"
               className="bloco-icon"
             />
@@ -49,7 +50,7 @@ const BlocoNotas: React.FC = () => {
             className="bloco-item"
           >
             <img
-              src="LINKSEXTERNOS.svg"
+              src={assetPath("LINKSEXTERNOS.svg")}
               alt="Icon"
               className="bloco-icon"
             />
